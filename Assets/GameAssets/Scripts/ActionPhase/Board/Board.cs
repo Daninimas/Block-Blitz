@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using GameAssets.Scripts.Tools;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace GameAssets.Scripts.ActionPhase
 {
@@ -13,6 +12,11 @@ namespace GameAssets.Scripts.ActionPhase
         private BoardCell[,] _grid;
         
         private List<BoardCell> _hoveredCells = new ();
+        
+        private readonly List<int> _highlightedFullRows = new ();
+        private readonly List<int> _highlightedFullColumns = new ();
+        
+        public event Action<List<int>, List<int>> OnScoredFullRowsAndColumns;
 
 
         public void SetUp(Vector2Int gridSize, BoardCellsFactory cellsFactory)
@@ -23,13 +27,14 @@ namespace GameAssets.Scripts.ActionPhase
         public bool HoverByPolyomino(RectTransform polyominoTransform, int[,] polyominoShape)
         {
             ClearHoveredCells();
+            ClearHighlightedRowsAndColumns();
 
             if (!boardView.IsPositionInsideRect(polyominoTransform.position))
                 return false;
             
             List<Vector2Int> hoveredCells = new List<Vector2Int>();
             
-            Vector3 polyominoTopLeftCorner = polyominoTransform.GetWorldTopLeft();
+            Vector3 polyominoTopLeftCorner = polyominoTransform.GetWorldTopLeft() + new Vector3(50f, -50f, 0f);
             
             var localRelativePos = boardView.GetHoverRelativePosition(polyominoTopLeftCorner);
             Vector2Int gridPos = new ()
@@ -60,11 +65,16 @@ namespace GameAssets.Scripts.ActionPhase
                     hoveredCells.Add(cellPosToCheck);
                 }
             }
-            
-            if(allCellsAreValid)
-                SetHoveredCells(hoveredCells);
 
-            return allCellsAreValid;
+            if (!allCellsAreValid) 
+                return false;
+            
+            SetHoveredCells(hoveredCells);
+                
+            HighlightFullRows();
+            HighlightFullColumns();
+
+            return true;
         }
 
         private bool IsValidCell(Vector2Int gridPos)
@@ -100,14 +110,99 @@ namespace GameAssets.Scripts.ActionPhase
             }
         }
 
-        public void ConfirmHoveredCellsAsPlacedPolyomino()
+        #region Confirm polyomino placement
+
+        public void PlacePolyominoInLastHoveredPos()
+        {
+            ConfirmHoveredCellsAsPlacedPolyomino();
+        }
+
+        private void ConfirmHoveredCellsAsPlacedPolyomino()
+        {
+            SetHoveredCellsAsUsed();
+            ClearHoveredCells();
+            
+            ScoreFullRowsAndColumns();
+            ClearHighlightedRowsAndColumns();
+        }
+
+        private void SetHoveredCellsAsUsed()
         {
             foreach (var hoveredCell in _hoveredCells)
             {
                 hoveredCell.SetState(CellState.Used);
             }
+        }
+
+        private void ScoreFullRowsAndColumns()
+        {
+            // Rows
+            foreach (var highlightedFullRow in _highlightedFullRows)
+            {
+                for (int c = 0; c < _grid.GetLength(1); c++)
+                {
+                    _grid[highlightedFullRow, c].SetState(CellState.Free);
+                }
+            }
             
-            ClearHoveredCells();
+            // Columns
+            foreach (var highlightedFullColumn in _highlightedFullColumns)
+            {
+                for (int r = 0; r < _grid.GetLength(0); r++)
+                {
+                    _grid[r, highlightedFullColumn].SetState(CellState.Free);
+                }
+            }
+            
+            OnScoredFullRowsAndColumns?.Invoke(_highlightedFullRows, _highlightedFullColumns);
+        }
+
+        #endregion
+        
+        
+        
+        private void ClearHighlightedRowsAndColumns()
+        {
+            _highlightedFullRows.Clear();
+            _highlightedFullColumns.Clear();
+        }
+
+        private void HighlightFullRows()
+        {
+            for (int r = 0; r < _grid.GetLength(0); r++)
+            {
+                bool isFullRow = true;
+                for (int c = 0; c < _grid.GetLength(1); c++)
+                {
+                    if (_grid[r, c].CurrentState != CellState.Used && _grid[r, c].CurrentState != CellState.Hovered)
+                    {
+                        isFullRow = false;
+                        break;
+                    }
+                }
+                
+                if(isFullRow)
+                    _highlightedFullRows.Add(r);
+            }
+        }
+
+        private void HighlightFullColumns()
+        {
+            for (int c = 0; c < _grid.GetLength(1); c++)
+            {
+                bool isFullColumn = true;
+                for (int r = 0; r < _grid.GetLength(0); r++)
+                {
+                    if (_grid[r, c].CurrentState != CellState.Used && _grid[r, c].CurrentState != CellState.Hovered)
+                    {
+                        isFullColumn = false;
+                        break;
+                    }
+                }
+                
+                if(isFullColumn)
+                    _highlightedFullColumns.Add(c);
+            }
         }
     }
 }

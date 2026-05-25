@@ -97,9 +97,10 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 cellsContainer.transform.localPosition = Vector3.zero;
                 ActionPhaseManager.Instance.board.ClearHoveredCells();
+                return;
             }
             
-            ActionPhaseManager.Instance.board.ConfirmHoveredCellsAsPlacedPolyomino();
+            ActionPhaseManager.Instance.board.PlacePolyominoInLastHoveredPos();
             
             OnPolyominoSuccessfullyPlaced?.Invoke(this);
         }
