@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using GameAssets.Scripts.Tools;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace GameAssets.Scripts.ActionPhase
 {
@@ -55,6 +57,21 @@ namespace GameAssets.Scripts.ActionPhase
         };
 
 
+        #region Event subscription
+
+        private void OnEnable()
+        {
+            Polyomino.OnPolyominoSuccessfullyPlaced += OnPolyominoPlaced;
+        }
+
+        private void OnDisable()
+        {
+            Polyomino.OnPolyominoSuccessfullyPlaced -= OnPolyominoPlaced;
+        }
+
+        #endregion
+
+
         public void SetUp()
         {
             CreateUsablePolyominoes();
@@ -72,11 +89,31 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 int figureIndex = Random.Range(0, _cellsShapes.Length - 1);
                 
-                var newPolymino = Instantiate(polyominoPrefab, pos);
-                newPolymino.SetUp(_cellsShapes[figureIndex], cellPrefab);
+                var newPolyomino = Instantiate(polyominoPrefab, pos);
+                newPolyomino.SetUp(_cellsShapes[figureIndex], cellPrefab);
                 
-                _usablePolyominoes.Add(newPolymino);
+                _usablePolyominoes.Add(newPolyomino);
             }
         }
+
+        #region Placed polyomino  management
+
+        private void OnPolyominoPlaced(Polyomino polyomino)
+        {
+            DestroyUsablePolyomino(polyomino);
+
+            if (_usablePolyominoes.Count == 0)
+            {
+                CreateUsablePolyominoes();
+            }
+        }
+
+        private void DestroyUsablePolyomino(Polyomino polyomino)
+        {
+            Destroy(polyomino.gameObject);
+            _usablePolyominoes.Remove(polyomino);
+        }
+
+        #endregion
     }
 }

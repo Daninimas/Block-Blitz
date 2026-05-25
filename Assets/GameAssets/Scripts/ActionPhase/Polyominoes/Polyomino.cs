@@ -1,15 +1,12 @@
-using System.Collections.Generic;
-using GameAssets.Scripts.Tools;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace GameAssets.Scripts.ActionPhase
 {
     public class Polyomino : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField] RectTransform cellsContainer;
-        [SerializeField] Image raycastImage; // TODO: Cambiar al view
 
         private Cell[,] _cells;
         
@@ -17,6 +14,8 @@ namespace GameAssets.Scripts.ActionPhase
         
         private bool _isOnDrag;
         private bool _canBeDropped;
+        
+        public static event Action<Polyomino> OnPolyominoSuccessfullyPlaced;
 
         public void SetUp(int[,] cellsShape, Cell cellPrefab)
         {
@@ -68,8 +67,6 @@ namespace GameAssets.Scripts.ActionPhase
         {
             _isOnDrag = true;
             _canBeDropped = false;
-            
-            raycastImage.raycastTarget = false;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -79,37 +76,14 @@ namespace GameAssets.Scripts.ActionPhase
         
             cellsContainer.transform.position = new Vector3(eventData.position.x, eventData.position.y + 200f);
 
-            _canBeDropped = CheckIfCanBeDropped(eventData);
+            _canBeDropped = CheckIfCanBeDropped();
         }
 
-        private bool CheckIfCanBeDropped(PointerEventData onDragEnventData)
+        private bool CheckIfCanBeDropped()
         {
-            /*PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
-            //Set the Pointer Event Position to that of the game object
-            pointerEventData.position = cellsContainer.transform.position;
-
-            //Create a list of Raycast Results
-            List<RaycastResult> results = new List<RaycastResult>();
-
-            //Raycast using the Graphics Raycaster and Polyomino center position
-            EventSystem.current.RaycastAll(pointerEventData, results);
-
-            foreach (var hit in results)
-            {
-                
-                RectTransform rect = hit.gameObject.GetComponent<RectTransform>();
-                if (rect == null)
-                    continue;
-
-                if (hit.gameObject.TryGetComponent(out Board board))
-                {
-                    board.HoverByPolyomino(hit, _cellsShape);
-                }
-            }*/
-
-            ActionPhaseManager.Instance.board.HoverByPolyomino(cellsContainer, _cellsShape);
+            bool canBeDropped = ActionPhaseManager.Instance.board.HoverByPolyomino(cellsContainer, _cellsShape);
             
-            return false;
+            return canBeDropped;
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -117,9 +91,17 @@ namespace GameAssets.Scripts.ActionPhase
             if(!_isOnDrag)
                 return;
             
-            raycastImage.raycastTarget = true;
+            _isOnDrag = false;
+
+            if (!_canBeDropped)
+            {
+                cellsContainer.transform.localPosition = Vector3.zero;
+                ActionPhaseManager.Instance.board.ClearHoveredCells();
+            }
             
-            cellsContainer.transform.localPosition = Vector3.zero;
+            ActionPhaseManager.Instance.board.ConfirmHoveredCellsAsPlacedPolyomino();
+            
+            OnPolyominoSuccessfullyPlaced?.Invoke(this);
         }
 
         #endregion

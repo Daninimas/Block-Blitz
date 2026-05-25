@@ -13,26 +13,6 @@ namespace GameAssets.Scripts.ActionPhase
             return cellsParent;
         }
 
-        /*public Vector2 GetHoverRelativePosition(RaycastResult hitResult)
-        {
-            Camera cam = hitResult.module.eventCamera;
-
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(cellsParent, hitResult.screenPosition,
-                    cam, out Vector2 localPoint))
-            {
-                Vector2 relativePos = new Vector2();
-                relativePos.x = Tools.Tools.NormalizeValues(0f, 1f, cellsParent.rect.xMin, cellsParent.rect.xMax, localPoint.x);
-                relativePos.y = Tools.Tools.NormalizeValues(0f, 1f, cellsParent.rect.yMin, cellsParent.rect.yMax, -localPoint.y);
-                
-                Log.Info("BoardView", "Local point: " + relativePos);
-                
-
-                return relativePos;
-            }
-
-            return Vector2.zero;
-        }*/
-
         public bool IsPositionInsideRect(Vector3 worldPos)
         {
             Vector2 localPoint = cellsParent.InverseTransformPoint(worldPos);
@@ -52,8 +32,6 @@ namespace GameAssets.Scripts.ActionPhase
             Vector2 relativePos = new Vector2();
             relativePos.x = Tools.Tools.NormalizeValues(0f, 1f, cellsParent.rect.xMin, cellsParent.rect.xMax, localPoint.x);
             relativePos.y = Tools.Tools.NormalizeValues(0f, 1f, cellsParent.rect.yMin, cellsParent.rect.yMax, -localPoint.y);
-                
-            Log.Info("BoardView", "Local point: " + relativePos);
             
             return relativePos;
         }

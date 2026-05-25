@@ -19,6 +19,17 @@ namespace GameAssets.Scripts.Tools
         {
             Debug.Log(FormatMessageWithCategory(category, message, TraceColor));
         }
+        
+        /// <summary>
+        /// A highlighted output to use when you are following the trace of an error.
+        /// Only appears on editor and test builds.
+        /// </summary>
+        /// <param name="category">Displays more info about the context.</param>
+        /// <param name="message">String or object to be converted to string representation for display.</param>
+        public static void Trace(object message)
+        {
+            Debug.Log($"<color={TraceColor}> {message}</color>");
+        }
 
         #endregion
         

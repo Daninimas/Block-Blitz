@@ -1,3 +1,4 @@
+using GameAssets.Scripts.Tools;
 using UnityEngine;
 
 namespace GameAssets.Scripts.ActionPhase
@@ -12,16 +13,16 @@ namespace GameAssets.Scripts.ActionPhase
     public class BoardCell : MonoBehaviour
     {
         [SerializeField] private BoardCellView view;
-        
-        private CellState _currrentState = CellState.Free;
+
+        public CellState CurrentState { private set; get; } = CellState.Free;
 
 
         public void SetState(CellState state)
         {
-            if(_currrentState == state)
+            if(CurrentState == state)
                 return;
             
-            _currrentState = state;
+            CurrentState = state;
             
             view.SetVisualState(state);
         }

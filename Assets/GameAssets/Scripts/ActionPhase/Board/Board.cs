@@ -19,30 +19,6 @@ namespace GameAssets.Scripts.ActionPhase
         {
             _grid = cellsFactory.CreateBoardCells(gridSize, boardView.GetCellsParent());
         }
-
-
-        /*public bool HoverByPolyomino(RaycastResult hit, int[,] polyominoShape)
-        {
-            ClearHoveredCells();
-            List<Vector2Int> hoveredCells = new List<Vector2Int>();
-            
-            var localRelativePos = boardView.GetHoverRelativePosition(hit);
-            Vector2 centerGridPos = new Vector2();
-            centerGridPos.x = Tools.Tools.NormalizeValues(0f, _grid.GetLength(1), 0f, 1f, localRelativePos.x);
-            centerGridPos.y = Tools.Tools.NormalizeValues(0f, _grid.GetLength(0), 0f, 1f, localRelativePos.y);
-            
-            Vector2 polyominoTopLeftCorner = centerGridPos - new Vector2(polyominoShape.GetLength(1)/2f,
-                                                                                polyominoShape.GetLength(0)/2f);
-            
-            Vector2Int polyominoTopLeftCornerRound = new Vector2Int((int)Mathf.Round(polyominoTopLeftCorner.x), 
-                (int)Mathf.Round(polyominoTopLeftCorner.y));
-
-            hoveredCells.Add(polyominoTopLeftCornerRound);
-            if (IsValidCell(polyominoTopLeftCornerRound))
-            {
-                SetHoveredCells(hoveredCells);
-            }
-        }*/
         
         public bool HoverByPolyomino(RectTransform polyominoTransform, int[,] polyominoShape)
         {
@@ -61,32 +37,55 @@ namespace GameAssets.Scripts.ActionPhase
                 x = (int)Tools.Tools.NormalizeValues(0f, _grid.GetLength(1), 0f, 1f, localRelativePos.x),
                 y = (int)Tools.Tools.NormalizeValues(0f, _grid.GetLength(0), 0f, 1f, localRelativePos.y)
             };
-            
-            Log.Trace("hola","gridPos " + gridPos + " localRelativePos "+ localRelativePos);
 
-            hoveredCells.Add(gridPos);
-            if (IsValidCell(gridPos))
+            bool allCellsAreValid = true;
+            for (int r = 0; r < polyominoShape.GetLength(0); r++)
             {
-                SetHoveredCells(hoveredCells);
-            }
+                if (!allCellsAreValid)
+                    break;
+                
+                for (int c = 0; c < polyominoShape.GetLength(1); c++)
+                {
+                    if(polyominoShape[r, c] == 0)
+                        continue;
+                    
+                    Vector2Int cellPosToCheck = gridPos + new Vector2Int(c, r);
 
-            return false;
+                    if (!IsValidCell(cellPosToCheck))
+                    {
+                        allCellsAreValid = false;
+                        break;
+                    }
+                    
+                    hoveredCells.Add(cellPosToCheck);
+                }
+            }
+            
+            if(allCellsAreValid)
+                SetHoveredCells(hoveredCells);
+
+            return allCellsAreValid;
         }
 
         private bool IsValidCell(Vector2Int gridPos)
         {
-            if(gridPos.x < 0 || gridPos.x >= _grid.GetLength(1) 
-                             || gridPos.y < 0 || gridPos.y >= _grid.GetLength(0))
+            int gridPosCol = gridPos.y;
+            int gridPosRow = gridPos.x;
+            
+            if(gridPosCol < 0 || gridPosCol >= _grid.GetLength(1) 
+                             || gridPosRow < 0 || gridPosRow >= _grid.GetLength(0)
+                             || _grid[gridPosCol, gridPosRow].CurrentState == CellState.Used)
                 return false;
             
             return true;
         }
 
-        private void ClearHoveredCells()
+        public void ClearHoveredCells()
         {
             foreach (var hoveredCell in _hoveredCells)
             {
-                hoveredCell.SetState(CellState.Free);
+                if(hoveredCell.CurrentState == CellState.Hovered)
+                    hoveredCell.SetState(CellState.Free);
             }
             _hoveredCells.Clear();
         }
@@ -99,6 +98,16 @@ namespace GameAssets.Scripts.ActionPhase
                 hoveredCell.SetState(CellState.Hovered);
                 _hoveredCells.Add(hoveredCell);
             }
+        }
+
+        public void ConfirmHoveredCellsAsPlacedPolyomino()
+        {
+            foreach (var hoveredCell in _hoveredCells)
+            {
+                hoveredCell.SetState(CellState.Used);
+            }
+            
+            ClearHoveredCells();
         }
     }
 }
