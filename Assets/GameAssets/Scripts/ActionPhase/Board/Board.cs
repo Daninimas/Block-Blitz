@@ -32,8 +32,6 @@ namespace GameAssets.Scripts.ActionPhase
             if (!boardView.IsPositionInsideRect(polyominoTransform.position))
                 return false;
             
-            List<Vector2Int> hoveredCells = new List<Vector2Int>();
-            
             Vector3 polyominoTopLeftCorner = polyominoTransform.GetWorldTopLeft() + new Vector3(50f, -50f, 0f);
             
             var localRelativePos = boardView.GetHoverRelativePosition(polyominoTopLeftCorner);
@@ -43,7 +41,31 @@ namespace GameAssets.Scripts.ActionPhase
                 y = (int)Tools.Tools.NormalizeValues(0f, _grid.GetLength(0), 0f, 1f, localRelativePos.y)
             };
 
+            (bool, List<Vector2Int>) canPlacePolyominoInPos = CanPlacePolyominoInPos(polyominoShape, gridPos);
+            
+            if(!canPlacePolyominoInPos.Item1)
+                return false;
+            
+            SetHoveredCells(canPlacePolyominoInPos.Item2);
+                
+            HighlightFullRows();
+            HighlightFullColumns();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Check if the polyomino can be placed in the selected position
+        /// </summary>
+        /// <returns>
+        /// bool -> with the information if can be placed
+        /// List<Vector2Int> -> list of checked and valid cells, ONLY used for the hover cells
+        /// </returns>
+        private (bool, List<Vector2Int>) CanPlacePolyominoInPos(int[,] polyominoShape, Vector2Int polyominoGridPos)
+        {
+            List<Vector2Int> validCells = new List<Vector2Int>();
             bool allCellsAreValid = true;
+            
             for (int r = 0; r < polyominoShape.GetLength(0); r++)
             {
                 if (!allCellsAreValid)
@@ -54,7 +76,7 @@ namespace GameAssets.Scripts.ActionPhase
                     if(polyominoShape[r, c] == 0)
                         continue;
                     
-                    Vector2Int cellPosToCheck = gridPos + new Vector2Int(c, r);
+                    Vector2Int cellPosToCheck = polyominoGridPos + new Vector2Int(c, r);
 
                     if (!IsValidCell(cellPosToCheck))
                     {
@@ -62,19 +84,11 @@ namespace GameAssets.Scripts.ActionPhase
                         break;
                     }
                     
-                    hoveredCells.Add(cellPosToCheck);
+                    validCells.Add(cellPosToCheck);
                 }
             }
 
-            if (!allCellsAreValid) 
-                return false;
-            
-            SetHoveredCells(hoveredCells);
-                
-            HighlightFullRows();
-            HighlightFullColumns();
-
-            return true;
+            return (allCellsAreValid, validCells);
         }
 
         private bool IsValidCell(Vector2Int gridPos)
@@ -204,5 +218,29 @@ namespace GameAssets.Scripts.ActionPhase
                     _highlightedFullColumns.Add(c);
             }
         }
+
+        #region Check if polyomino can be placed
+
+        public bool CheckIfPolyominoCanBePlacedInAllGrid(int[,] polyominoShape)
+        {
+            int polyominoRows = polyominoShape.GetLength(0);
+            int polyominoCols = polyominoShape.GetLength(1);
+
+            for (int r = 0; r < _grid.GetLength(0) - polyominoRows; r++)
+            {
+                for (int c = 0; c < _grid.GetLength(1) - polyominoCols; c++)
+                {
+                    var gridPos = new Vector2Int(r, c);
+                    (bool, List<Vector2Int>) canPlacePolyominoInPos = CanPlacePolyominoInPos(polyominoShape, gridPos);
+                    
+                    if(canPlacePolyominoInPos.Item1)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        #endregion
     }
 }

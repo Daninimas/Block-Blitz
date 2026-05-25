@@ -10,7 +10,7 @@ namespace GameAssets.Scripts.ActionPhase
 
         private Cell[,] _cells;
         
-        private int[,] _cellsShape;
+        public int[,] CellsShape { private set; get; }
         
         private bool _isOnDrag;
         private bool _canBeDropped;
@@ -19,7 +19,7 @@ namespace GameAssets.Scripts.ActionPhase
 
         public void SetUp(int[,] cellsShape, Cell cellPrefab)
         {
-            _cellsShape = cellsShape;
+            CellsShape = cellsShape;
 
             SetContainerDimensions(cellsShape, cellPrefab);
             
@@ -81,7 +81,7 @@ namespace GameAssets.Scripts.ActionPhase
 
         private bool CheckIfCanBeDropped()
         {
-            bool canBeDropped = ActionPhaseManager.Instance.board.HoverByPolyomino(cellsContainer, _cellsShape);
+            bool canBeDropped = ActionPhaseManager.Instance.board.HoverByPolyomino(cellsContainer, CellsShape);
             
             return canBeDropped;
         }

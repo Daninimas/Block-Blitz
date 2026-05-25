@@ -106,6 +106,26 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 CreateUsablePolyominoes();
             }
+
+            CheckGameOver();
+        }
+
+        private void CheckGameOver()
+        {
+            bool canPlaceAnyPolyomino = false;
+            foreach (var usablePolyomino in _usablePolyominoes)
+            {
+                canPlaceAnyPolyomino = 
+                    ActionPhaseManager.Instance.board.CheckIfPolyominoCanBePlacedInAllGrid(usablePolyomino.CellsShape);
+                
+                if (canPlaceAnyPolyomino)
+                    break;
+            }
+
+            if (!canPlaceAnyPolyomino)
+            {
+                Log.Trace("------------------ GAME OVER ------------------");
+            }
         }
 
         private void DestroyUsablePolyomino(Polyomino polyomino)
