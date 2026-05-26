@@ -702,7 +702,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1182542128}
   - component: {fileID: 1182542130}
-  - component: {fileID: 1182542129}
   - component: {fileID: 1182542131}
   m_Layer: 5
   m_Name: Desk
@@ -733,18 +732,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 297}
   m_SizeDelta: {x: -185.26837, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!210 &1182542129
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1182542127}
-  m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 3
-  m_SortAtRoot: 0
 --- !u!114 &1182542130
 MonoBehaviour:
   m_ObjectHideFlags: 0

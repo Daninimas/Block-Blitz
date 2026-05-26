@@ -58,7 +58,7 @@ namespace GameAssets.Scripts.ActionPhase
         /// Check if the polyomino can be placed in the selected position
         /// </summary>
         /// <returns>
-        /// bool -> with the information if can be placed
+        /// bool -> return if the polyomino can be placed
         /// List<Vector2Int> -> list of checked and valid cells, ONLY used for the hover cells
         /// </returns>
         private (bool, List<Vector2Int>) CanPlacePolyominoInPos(int[,] polyominoShape, Vector2Int polyominoGridPos)

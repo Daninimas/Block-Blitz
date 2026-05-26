@@ -8,9 +8,10 @@ namespace GameAssets.Scripts.ActionPhase
     {
         [SerializeField] RectTransform cellsContainer;
 
+        public int[,] CellsShape { private set; get; }
+        
         private Cell[,] _cells;
         
-        public int[,] CellsShape { private set; get; }
         
         private bool _isOnDrag;
         private bool _canBeDropped;
@@ -106,6 +107,5 @@ namespace GameAssets.Scripts.ActionPhase
         }
 
         #endregion
-        
     }
 }

@@ -52,7 +52,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellsContainer: {fileID: 2902049968150483511}
-  raycastImage: {fileID: -8790827390914108443}
 --- !u!225 &8546298094629899563
 CanvasGroup:
   m_ObjectHideFlags: 0
