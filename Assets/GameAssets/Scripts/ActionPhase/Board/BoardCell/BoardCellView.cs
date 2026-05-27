@@ -5,7 +5,7 @@ namespace GameAssets.Scripts.ActionPhase
 {
     public class BoardCellView : MonoBehaviour
     {
-        [SerializeField] private Image image;
+        [SerializeField] private SpriteRenderer spriteRenderer;
         
         [Space(10)]
         [Header("Visual states")]
@@ -38,18 +38,18 @@ namespace GameAssets.Scripts.ActionPhase
 
         private void SetFreeVisuals()
         {
-            image.color = freeColor;
-            image.sprite = freeSprite;
+            spriteRenderer.color = freeColor;
+            spriteRenderer.sprite = freeSprite;
         }
         
         private void SetHoverVisuals()
         {
-            image.color = hoverColor;
+            spriteRenderer.color = hoverColor;
         }
         
         private void SetUsedVisuals()
         {
-            image.color = usedColor;
+            spriteRenderer.color = usedColor;
         }
 
         #endregion

@@ -8,17 +8,34 @@ namespace GameAssets.Scripts.ActionPhase
 
         public BoardCell[,] CreateBoardCells(Vector2Int gridSize, Transform cellsParent)
         {
-            BoardCell[,] newGrid = new BoardCell[gridSize.x, gridSize.y];
+            int maxRows = gridSize.y;
+            int maxCols = gridSize.x;
             
-            for (var x = 0; x < gridSize.x; x++)
+            BoardCell[,] newGrid = new BoardCell[maxRows, maxCols];
+            
+            for (var c = 0; c < maxCols; c++)
             {
-                for (var y = 0; y < gridSize.y; y++)
+                for (var r = 0; r < maxRows; r++)
                 {
-                    newGrid[x, y] = Instantiate(cellPrefab, cellsParent);
+                    BoardCell newBoardCell = Instantiate(cellPrefab, cellsParent);
+                    newGrid[r, c] = newBoardCell;
+                    
+                    SetCellInPosition(newBoardCell.transform, r, c, gridSize);
                 }
             }
             
             return newGrid;
+        }
+
+        private void SetCellInPosition(Transform cellTransform, int r, int c, Vector2Int gridSize)
+        {
+            Vector2 cellSize = ActionPhaseManager.Instance.CellSize;
+            Vector2 cellCenter = new Vector2(cellSize.x / 2f, cellSize.y / 2f);
+            
+            Vector2 topLeftCorner = new Vector2(gridSize.x * cellSize.x / 2f, gridSize.y * cellSize.y / 2f);
+            
+            cellTransform.localPosition = new Vector3(c * cellSize.x - topLeftCorner.x + cellCenter.x, 
+                -r * cellSize.y + topLeftCorner.y - cellCenter.y, 0f);
         }
     }
 }

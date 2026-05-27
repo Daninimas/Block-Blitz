@@ -11,6 +11,8 @@ namespace GameAssets.Scripts.ActionPhase
         [SerializeField] private Transform[] usablePolyominoesPositions;
         [SerializeField] private Polyomino polyominoPrefab;
         [SerializeField] private Cell cellPrefab; // TODO: Refactor a otro sitio
+        [SerializeField] private Vector2 polyominoHoverExtraDistance = Vector2.zero;
+        public Vector2 PolyominoHoverExtraDistance => polyominoHoverExtraDistance;
         
         private List<Polyomino> _usablePolyominoes = new List<Polyomino>();
         
@@ -90,7 +92,7 @@ namespace GameAssets.Scripts.ActionPhase
                 int figureIndex = Random.Range(0, _cellsShapes.Length - 1);
                 
                 var newPolyomino = Instantiate(polyominoPrefab, pos);
-                newPolyomino.SetUp(_cellsShapes[figureIndex], cellPrefab);
+                newPolyomino.SetUp(_cellsShapes[figureIndex], cellPrefab, polyominoHoverExtraDistance);
                 
                 _usablePolyominoes.Add(newPolyomino);
             }

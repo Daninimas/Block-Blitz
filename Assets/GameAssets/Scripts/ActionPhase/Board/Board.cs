@@ -22,26 +22,28 @@ namespace GameAssets.Scripts.ActionPhase
         public void SetUp(Vector2Int gridSize, BoardCellsFactory cellsFactory)
         {
             _grid = cellsFactory.CreateBoardCells(gridSize, boardView.GetCellsParent());
+            
+            boardView.SetUp(gridSize);
         }
         
-        public bool HoverByPolyomino(RectTransform polyominoTransform, int[,] polyominoShape)
+        public bool HoverByPolyomino(Polyomino polyomino)
         {
             ClearHoveredCells();
             ClearHighlightedRowsAndColumns();
 
-            if (!boardView.IsPositionInsideRect(polyominoTransform.position))
+            if (!boardView.IsPositionInsideRect(polyomino.CellsContainerTransform.position))
                 return false;
             
-            Vector3 polyominoTopLeftCorner = polyominoTransform.GetWorldTopLeft() + new Vector3(50f, -50f, 0f);
+            Vector3 polyominoTopLeftCorner = polyomino.GetTopLeftCellPosition();
             
-            var localRelativePos = boardView.GetHoverRelativePosition(polyominoTopLeftCorner);
+            var localRelativePos = boardView.GetRelativePosToTopLeftCorner(polyominoTopLeftCorner);
             Vector2Int gridPos = new ()
             {
                 x = (int)Tools.Tools.NormalizeValues(0f, _grid.GetLength(1), 0f, 1f, localRelativePos.x),
                 y = (int)Tools.Tools.NormalizeValues(0f, _grid.GetLength(0), 0f, 1f, localRelativePos.y)
             };
 
-            (bool, List<Vector2Int>) canPlacePolyominoInPos = CanPlacePolyominoInPos(polyominoShape, gridPos);
+            (bool, List<Vector2Int>) canPlacePolyominoInPos = CanPlacePolyominoInPos(polyomino.CellsShape, gridPos);
             
             if(!canPlacePolyominoInPos.Item1)
                 return false;
