@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using GameAssets.Scripts.Tools;
 using UnityEngine;
@@ -6,15 +5,13 @@ using Random = UnityEngine.Random;
 
 namespace GameAssets.Scripts.ActionPhase
 {
-    public class Desk : MonoBehaviour
+    public class Desk
     {
-        [SerializeField] private Transform[] usablePolyominoesPositions;
-        [SerializeField] private Polyomino polyominoPrefab;
-        [SerializeField] private Cell cellPrefab; // TODO: Refactor a otro sitio
-        [SerializeField] private Vector2 polyominoHoverExtraDistance = Vector2.zero;
-        public Vector2 PolyominoHoverExtraDistance => polyominoHoverExtraDistance;
+        private readonly DeskModel _deskModel;
+        private readonly DeskView _deskView;
+        public Vector2 PolyominoHoverExtraDistance => _deskModel.Data.polyominoHoverExtraDistance;
         
-        private List<Polyomino> _usablePolyominoes = new List<Polyomino>();
+        private readonly List<Polyomino> _usablePolyominoes = new List<Polyomino>();
         
         private readonly int[][,] _cellsShapes =
         {
@@ -61,23 +58,50 @@ namespace GameAssets.Scripts.ActionPhase
 
         #region Event subscription
 
-        private void OnEnable()
+        private void SubscribeEvents()
         {
+            UnsubscribeEvents();
+            
             Polyomino.OnPolyominoSuccessfullyPlaced += OnPolyominoPlaced;
         }
 
-        private void OnDisable()
+        private void UnsubscribeEvents()
         {
             Polyomino.OnPolyominoSuccessfullyPlaced -= OnPolyominoPlaced;
         }
 
         #endregion
 
-
-        public void SetUp()
+        #region Construction
+        
+        Desk(DeskView view, DeskModel deskModel)
         {
+            _deskView = view;
+            _deskModel = deskModel;
+            
             CreateUsablePolyominoes();
+
+            SubscribeEvents();
         }
+
+        public class Builder
+        {
+            public Desk Build(DeskView view, DeskData deskData)
+            {
+                return new Desk(view, new DeskModel(deskData));
+            }
+        }
+        
+        #endregion
+
+        #region Destruction
+
+        ~Desk()
+        {
+            UnsubscribeEvents();
+        }
+
+        #endregion
 
         private void CreateUsablePolyominoes()
         {
@@ -87,12 +111,14 @@ namespace GameAssets.Scripts.ActionPhase
                 return;
             }
 
-            foreach (var pos in usablePolyominoesPositions)
+            int usablePolyominoesPositions = _deskView.UsablePolyominoesPositions;
+
+            for (int i = 0; i < usablePolyominoesPositions; i++)
             {
                 int figureIndex = Random.Range(0, _cellsShapes.Length);
                 
-                var newPolyomino = Instantiate(polyominoPrefab, pos);
-                newPolyomino.SetUp(_cellsShapes[figureIndex], cellPrefab, polyominoHoverExtraDistance);
+                var newPolyomino = _deskView.InstantiatePolyominoInUsablePosition(_deskModel.Data.polyominoPrefab, i);
+                newPolyomino.SetUp(_cellsShapes[figureIndex], _deskModel.Data.cellPrefab, _deskModel.Data.polyominoHoverExtraDistance);
                 
                 _usablePolyominoes.Add(newPolyomino);
             }
@@ -132,7 +158,7 @@ namespace GameAssets.Scripts.ActionPhase
 
         private void DestroyUsablePolyomino(Polyomino polyomino)
         {
-            Destroy(polyomino.gameObject);
+            _deskView.DestroyGameObject(polyomino.gameObject);
             _usablePolyominoes.Remove(polyomino);
         }
 

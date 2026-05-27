@@ -12,7 +12,13 @@ namespace GameAssets.Scripts.ActionPhase
         public Board board;
         [SerializeField] Vector2Int gridSize = Vector2Int.one;
         [SerializeField] Vector2 cellSize = Vector2.one;
-        [SerializeField] Desk desk;
+        
+        [Space(10)]
+        [Header("Desk configuration")]
+        [SerializeField] DeskView deskView;
+        [SerializeField] DeskData deskData;
+        public Desk desk;
+        
         
         public Vector2 CellSize => cellSize;
 
@@ -28,7 +34,9 @@ namespace GameAssets.Scripts.ActionPhase
         public IEnumerator LoadAssets()
         {
             board.SetUp(gridSize, boardCellsFactory);
-            desk.SetUp();
+            
+            desk = new Desk.Builder()
+                .Build(deskView, deskData);
             
             yield break;
         }
