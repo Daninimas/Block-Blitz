@@ -20,6 +20,7 @@ namespace GameAssets.Scripts.ActionPhase
         public int[,] CellsShape { private set; get; }
         
         private Cell[,] _cells;
+        private uint _cellsCount;
         
         private Vector2 _hoverExtraDistance;
         
@@ -61,6 +62,7 @@ namespace GameAssets.Scripts.ActionPhase
         private void CreateCells(int[,] cellsShape, Cell cellPrefab)
         {
             _cells = new Cell[cellsShape.GetLength(0), cellsShape.GetLength(1)];
+            _cellsCount = 0;
             
             var cellSize = ActionPhaseManager.Instance.CellSize;
             Vector2 polyominoCenter = new Vector2(cellSize.x * cellsShape.GetLength(1) / 2f, 
@@ -81,6 +83,7 @@ namespace GameAssets.Scripts.ActionPhase
                         -r * cellSize.y + polyominoCenter.y - cellCenter.y, 0f);
 
                     _cells[r, c] = newCell;
+                    _cellsCount++;
                 }
             }
         }
@@ -186,5 +189,10 @@ namespace GameAssets.Scripts.ActionPhase
         }
 
         #endregion
+
+        public uint GetCellsCount()
+        {
+            return _cellsCount;
+        }
     }
 }

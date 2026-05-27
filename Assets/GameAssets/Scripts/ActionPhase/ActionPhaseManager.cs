@@ -1,4 +1,5 @@
 using System.Collections;
+using GameAssets.Scripts.ActionPhase.Score;
 using GameAssets.Scripts.Tools;
 using GameAssets.Scripts.Tools.Interfaces;
 using UnityEngine;
@@ -16,14 +17,19 @@ namespace GameAssets.Scripts.ActionPhase
         [SerializeField] BoardData boardData;
         public Board board;
         
-        
         [Space(10)]
         [Header("Desk configuration")]
         [SerializeField] DeskView deskView;
         [SerializeField] DeskData deskData;
         public Desk desk;
         
+        [Space(10)]
+        [Header("Score configuration")]
+        [SerializeField] ScoreView scoreView;
+        public ScoreController scoreController;
         
+        [Space(10)]
+        [Header("Common game configuration")]
         public Vector2 cellSize = Vector2.one;
         public Vector2 CellSize => cellSize;
 
@@ -43,6 +49,9 @@ namespace GameAssets.Scripts.ActionPhase
             
             desk = new Desk.Builder()
                 .Build(deskView, deskData);
+            
+            scoreController = new ScoreController.Builder()
+                .Build(scoreView);
             
             yield break;
         }

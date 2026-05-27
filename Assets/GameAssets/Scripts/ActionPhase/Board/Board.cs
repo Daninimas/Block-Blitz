@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using GameAssets.Scripts.Tools;
 using UnityEngine;
 
 namespace GameAssets.Scripts.ActionPhase
@@ -16,6 +15,8 @@ namespace GameAssets.Scripts.ActionPhase
         
         private readonly List<int> _highlightedFullRows = new ();
         private readonly List<int> _highlightedFullColumns = new ();
+        
+        public Vector2Int GridSize => new Vector2Int(_grid.GetLength(1), _grid.GetLength(0));
         
         public event Action<List<int>, List<int>> OnScoredFullRowsAndColumns;
 
@@ -185,6 +186,9 @@ namespace GameAssets.Scripts.ActionPhase
                     _grid[r, highlightedFullColumn].SetState(CellState.Free);
                 }
             }
+            
+            if(_highlightedFullColumns.Count == 0 && _highlightedFullRows.Count == 0)
+                return;
             
             OnScoredFullRowsAndColumns?.Invoke(_highlightedFullRows, _highlightedFullColumns);
         }
