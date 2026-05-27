@@ -89,7 +89,7 @@ namespace GameAssets.Scripts.ActionPhase
 
             foreach (var pos in usablePolyominoesPositions)
             {
-                int figureIndex = Random.Range(0, _cellsShapes.Length - 1);
+                int figureIndex = Random.Range(0, _cellsShapes.Length);
                 
                 var newPolyomino = Instantiate(polyominoPrefab, pos);
                 newPolyomino.SetUp(_cellsShapes[figureIndex], cellPrefab, polyominoHoverExtraDistance);
