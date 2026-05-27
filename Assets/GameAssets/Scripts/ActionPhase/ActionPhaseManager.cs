@@ -8,10 +8,14 @@ namespace GameAssets.Scripts.ActionPhase
 {
     public class ActionPhaseManager : Singleton<ActionPhaseManager>, IManageable
     {
-        [SerializeField] BoardCellsFactory boardCellsFactory;
+        public BoardCellsFactory boardCellsFactory;
+        
+        [Space(10)]
+        [Header("Board configuration")]
+        [SerializeField] BoardView boardView;
+        [SerializeField] BoardData boardData;
         public Board board;
-        [SerializeField] Vector2Int gridSize = Vector2Int.one;
-        [SerializeField] Vector2 cellSize = Vector2.one;
+        
         
         [Space(10)]
         [Header("Desk configuration")]
@@ -20,6 +24,7 @@ namespace GameAssets.Scripts.ActionPhase
         public Desk desk;
         
         
+        public Vector2 cellSize = Vector2.one;
         public Vector2 CellSize => cellSize;
 
 
@@ -33,7 +38,8 @@ namespace GameAssets.Scripts.ActionPhase
         public bool initialized { get; set; }
         public IEnumerator LoadAssets()
         {
-            board.SetUp(gridSize, boardCellsFactory);
+            board = new Board.Builder()
+                .Build(boardView, boardData);
             
             desk = new Desk.Builder()
                 .Build(deskView, deskData);

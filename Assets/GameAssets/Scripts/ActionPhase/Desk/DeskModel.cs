@@ -2,11 +2,11 @@ namespace GameAssets.Scripts.ActionPhase
 {
     public class DeskModel
     {
-        public DeskData Data { get; }
+        public DeskData data { get; }
         
         public DeskModel(DeskData data)
         {
-            Data = data;
+            this.data = data;
         }
     }
 }

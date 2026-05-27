@@ -5,38 +5,54 @@ using UnityEngine;
 
 namespace GameAssets.Scripts.ActionPhase
 {
-    public class Board : MonoBehaviour
+    public class Board
     {
-        [SerializeField] private BoardView boardView;
+        private readonly BoardView _boardView;
+        private readonly BoardModel _boardModel;
         
-        private BoardCell[,] _grid;
+        private readonly BoardCell[,] _grid;
         
-        private List<BoardCell> _hoveredCells = new ();
+        private readonly List<BoardCell> _hoveredCells = new ();
         
         private readonly List<int> _highlightedFullRows = new ();
         private readonly List<int> _highlightedFullColumns = new ();
         
         public event Action<List<int>, List<int>> OnScoredFullRowsAndColumns;
 
-
-        public void SetUp(Vector2Int gridSize, BoardCellsFactory cellsFactory)
+        #region Construction
+        
+        Board(BoardView view, BoardModel boardModel)
         {
-            _grid = cellsFactory.CreateBoardCells(gridSize, boardView.GetCellsParent());
+            _boardView = view;
+            _boardModel = boardModel;
             
-            boardView.SetUp(gridSize);
+            _grid = ActionPhaseManager.Instance.boardCellsFactory.CreateBoardCells(_boardModel.boardData.gridSize, 
+                _boardView.GetCellsParent());
+            
+            _boardView.InitializeData(_boardModel.boardData.gridSize);
         }
+
+        public class Builder
+        {
+            public Board Build(BoardView view, BoardData boardData)
+            {
+                return new Board(view, new BoardModel(boardData));
+            }
+        }
+        
+        #endregion
         
         public bool HoverByPolyomino(Polyomino polyomino)
         {
             ClearHoveredCells();
             ClearHighlightedRowsAndColumns();
 
-            if (!boardView.IsPositionInsideRect(polyomino.CellsContainerTransform.position))
+            if (!_boardView.IsPositionInsideRect(polyomino.CellsContainerTransform.position))
                 return false;
             
             Vector3 polyominoTopLeftCorner = polyomino.GetTopLeftCellPosition();
             
-            var localRelativePos = boardView.GetRelativePosToTopLeftCorner(polyominoTopLeftCorner);
+            var localRelativePos = _boardView.GetRelativePosToTopLeftCorner(polyominoTopLeftCorner);
             Vector2Int gridPos = new ()
             {
                 x = (int)Tools.Tools.NormalizeValues(0f, _grid.GetLength(1), 0f, 1f, localRelativePos.x),

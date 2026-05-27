@@ -10,7 +10,7 @@ namespace GameAssets.Scripts.ActionPhase
         private Rect _dimensions;
 
 
-        public void SetUp(Vector2Int gridSize)
+        public void InitializeData(Vector2Int gridSize)
         {
             var center = cellsParent.position;
             var cellSize = ActionPhaseManager.Instance.CellSize;

@@ -9,51 +9,9 @@ namespace GameAssets.Scripts.ActionPhase
     {
         private readonly DeskModel _deskModel;
         private readonly DeskView _deskView;
-        public Vector2 PolyominoHoverExtraDistance => _deskModel.Data.polyominoHoverExtraDistance;
+        public Vector2 PolyominoHoverExtraDistance => _deskModel.data.polyominoHoverExtraDistance;
         
         private readonly List<Polyomino> _usablePolyominoes = new List<Polyomino>();
-        
-        private readonly int[][,] _cellsShapes =
-        {
-            new int[,]
-            {
-                { 0, 0, 1 }, 
-                { 0, 0, 1 },
-                { 1, 1, 1 }
-            },
-            new int[,]
-            {
-                { 0, 1, 0 },
-                { 1, 1, 1 }
-            },
-            new int[,]
-            {
-                { 1 }, 
-                { 1 },
-                { 1 },
-                { 1 },
-                { 1 }
-            },
-            new int[,]
-            {
-                { 1, 1 }, 
-                { 1, 1 }
-            },
-            new int[,]
-            {
-                { 1, 1, 0 }, 
-                { 0, 1, 1 }
-            },
-            new int[,]
-            {
-                { 1, 1 }
-            },
-            new int[,]
-            {
-                { 1 }
-            }
-            
-        };
 
 
         #region Event subscription
@@ -115,10 +73,10 @@ namespace GameAssets.Scripts.ActionPhase
 
             for (int i = 0; i < usablePolyominoesPositions; i++)
             {
-                int figureIndex = Random.Range(0, _cellsShapes.Length);
+                int figureIndex = Random.Range(0, _deskModel.data.cellsShapes.Length);
                 
-                var newPolyomino = _deskView.InstantiatePolyominoInUsablePosition(_deskModel.Data.polyominoPrefab, i);
-                newPolyomino.SetUp(_cellsShapes[figureIndex], _deskModel.Data.cellPrefab, _deskModel.Data.polyominoHoverExtraDistance);
+                var newPolyomino = _deskView.InstantiatePolyominoInUsablePosition(_deskModel.data.polyominoPrefab, i);
+                newPolyomino.SetUp(_deskModel.data.cellsShapes[figureIndex], _deskModel.data.cellPrefab, _deskModel.data.polyominoHoverExtraDistance);
                 
                 _usablePolyominoes.Add(newPolyomino);
             }

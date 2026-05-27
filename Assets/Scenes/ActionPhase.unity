@@ -726,7 +726,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1594847627}
   - component: {fileID: 1594847626}
-  - component: {fileID: 1594847625}
   - component: {fileID: 1594847624}
   m_Layer: 0
   m_Name: Board
@@ -748,19 +747,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellsParent: {fileID: 1760936506}
---- !u!114 &1594847625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1594847623}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1ed8f828f3247a2ab9451504b08a717, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  boardView: {fileID: 1594847624}
 --- !u!210 &1594847626
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -934,11 +920,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardCellsFactory: {fileID: 238925904}
-  board: {fileID: 1594847625}
-  gridSize: {x: 8, y: 8}
-  cellSize: {x: 0.32, y: 0.32}
+  boardView: {fileID: 1594847624}
+  boardData: {fileID: 11400000, guid: 214c8284f1070c045811608780610c6a, type: 2}
   deskView: {fileID: 539068040}
   deskData: {fileID: 11400000, guid: 785650e2bbb98c842b94ba725e0dfd10, type: 2}
+  cellSize: {x: 0.32, y: 0.32}
 --- !u!4 &1987555790
 Transform:
   m_ObjectHideFlags: 0
