@@ -308,9 +308,9 @@ namespace GameAssets.Scripts.ActionPhase
             int polyominoRows = polyominoShape.GetLength(0);
             int polyominoCols = polyominoShape.GetLength(1);
 
-            for (int r = 0; r < _grid.GetLength(0) - polyominoRows; r++)
+            for (int r = 0; r < _grid.GetLength(0) - polyominoRows + 1; r++)
             {
-                for (int c = 0; c < _grid.GetLength(1) - polyominoCols; c++)
+                for (int c = 0; c < _grid.GetLength(1) - polyominoCols + 1; c++)
                 {
                     var gridPos = new Vector2Int(r, c);
                     (bool, List<Vector2Int>) canPlacePolyominoInPos = CanPlacePolyominoInPos(polyominoShape, gridPos);
