@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GameAssets.Scripts.Tools;
 using UnityEngine;
@@ -11,6 +12,8 @@ namespace GameAssets.Scripts.ActionPhase.Score
         public int CurrentScore { get; private set; }
 
         private int[] multipleLinesFactor = new int[] { 0, 2, 4, 6, 10, 15, 20 };
+        
+        public event Action<int> OnAddedScore;
         
         
         #region Event subscription
@@ -89,6 +92,8 @@ namespace GameAssets.Scripts.ActionPhase.Score
             
             CurrentScore += earnedPoints;
             _scoreView.UpdateScoreText(CurrentScore, earnedPoints);
+            
+            OnAddedScore?.Invoke(earnedPoints);
         }
     }
 }

@@ -126,7 +126,7 @@ namespace GameAssets.Scripts.ActionPhase
             _isOnDrag = true;
             _canBeDropped = false;
             
-            SetSortingGroupOrder(2);
+            SetSortingGroupOrder(sortingGroup.sortingOrder + 1);
         }
 
         public void OnDrag(PointerEventData eventData)
