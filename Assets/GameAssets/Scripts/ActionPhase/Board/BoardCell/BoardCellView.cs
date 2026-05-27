@@ -9,37 +9,42 @@ namespace GameAssets.Scripts.ActionPhase
         
         [Space(10)]
         [Header("Visual states")]
-        [Header("Free")]
-        [SerializeField] private Color freeColor;
-        [SerializeField] private Sprite freeSprite;
+        [Header("Normal")]
+        [SerializeField] private Color normalColor;
+        [SerializeField] private Sprite normalSprite;
         [Header("Used")]
         [SerializeField] private Color usedColor;
         [Header("Hover")]
         [SerializeField] private Color hoverColor;
+        [Header("Highlighted")]
+        [SerializeField] private Color highlightedColor;
 
 
         #region Visual state
 
-        public void SetVisualState(CellState state)
+        public void SetVisualState(VisualCellState state)
         {
             switch (state)
             {
-                case CellState.Free:
-                    SetFreeVisuals();
+                case VisualCellState.Normal:
+                    SetNormalVisuals();
                     break;
-                case CellState.Hovered:
+                case VisualCellState.Hovered:
                     SetHoverVisuals();
                     break;
-                case CellState.Used:
+                case VisualCellState.Used:
                     SetUsedVisuals();
+                    break;
+                case VisualCellState.Highlighted:
+                    SetHighlightedVisuals();
                     break;
             }
         }
 
-        private void SetFreeVisuals()
+        private void SetNormalVisuals()
         {
-            spriteRenderer.color = freeColor;
-            spriteRenderer.sprite = freeSprite;
+            spriteRenderer.color = normalColor;
+            spriteRenderer.sprite = normalSprite;
         }
         
         private void SetHoverVisuals()
@@ -50,6 +55,11 @@ namespace GameAssets.Scripts.ActionPhase
         private void SetUsedVisuals()
         {
             spriteRenderer.color = usedColor;
+        }
+        
+        private void SetHighlightedVisuals()
+        {
+            spriteRenderer.color = highlightedColor;
         }
 
         #endregion

@@ -190,16 +190,34 @@ namespace GameAssets.Scripts.ActionPhase
         }
 
         #endregion
-        
-        
-        
+
+
+        #region Highlight Rows and Columns
+
         private void ClearHighlightedRowsAndColumns()
         {
+            UnhighlightUsedCells();
+            
             _highlightedFullRows.Clear();
             _highlightedFullColumns.Clear();
         }
 
+        private void UnhighlightUsedCells()
+        {
+            SetVisualStateToHighlightedRow(VisualCellState.Used);
+            SetVisualStateToHighlightedColumn(VisualCellState.Used);
+        }
+
+        #region Rows
+
         private void HighlightFullRows()
+        {
+            CalculateHighlightedFullRows();
+            
+            SetVisualStateToHighlightedRow(VisualCellState.Highlighted);
+        }
+
+        private void CalculateHighlightedFullRows()
         {
             for (int r = 0; r < _grid.GetLength(0); r++)
             {
@@ -218,7 +236,34 @@ namespace GameAssets.Scripts.ActionPhase
             }
         }
 
+        private void SetVisualStateToHighlightedRow(VisualCellState visualState)
+        {
+            foreach (var rowToHighlight in _highlightedFullRows)
+            {
+                for (int c = 0; c < _grid.GetLength(1); c++)
+                {
+                    var cell = _grid[rowToHighlight, c];
+                    
+                    if(cell.CurrentState == CellState.Used)
+                        cell.SetVisualState(visualState);
+                }
+            }
+        }
+        
+        #endregion
+
+
+
+        #region Columns
+
         private void HighlightFullColumns()
+        {
+            CalculateHighlightFullColumns();
+
+            SetVisualStateToHighlightedColumn(VisualCellState.Highlighted);
+        }
+        
+        private void CalculateHighlightFullColumns()
         {
             for (int c = 0; c < _grid.GetLength(1); c++)
             {
@@ -236,6 +281,25 @@ namespace GameAssets.Scripts.ActionPhase
                     _highlightedFullColumns.Add(c);
             }
         }
+        
+        private void SetVisualStateToHighlightedColumn(VisualCellState visualState)
+        {
+            foreach (var columnToHighlight in _highlightedFullColumns)
+            {
+                for (int r = 0; r < _grid.GetLength(0); r++)
+                {
+                    var cell = _grid[r, columnToHighlight];
+                    
+                    if(cell.CurrentState == CellState.Used)
+                        cell.SetVisualState(visualState);
+                }
+            }
+        }
+        
+        #endregion
+        
+        #endregion
+        
 
         #region Check if polyomino can be placed
 

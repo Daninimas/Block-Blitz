@@ -18,6 +18,8 @@ namespace GameAssets.Scripts.ActionPhase
                 for (var r = 0; r < maxRows; r++)
                 {
                     BoardCell newBoardCell = Instantiate(cellPrefab, cellsParent);
+                    
+                    newBoardCell.Initialize();
                     newGrid[r, c] = newBoardCell;
                     
                     SetCellInPosition(newBoardCell.transform, r, c, gridSize);
