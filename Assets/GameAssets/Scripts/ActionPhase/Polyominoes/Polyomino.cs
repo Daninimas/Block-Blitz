@@ -22,6 +22,8 @@ namespace GameAssets.Scripts.ActionPhase
         private Cell[,] _cells;
         private uint _cellsCount;
         
+        private Cell.CellColorData _cellsColorData;
+        
         private Vector2 _hoverExtraDistance;
         
         private Camera _mainCam;
@@ -32,15 +34,14 @@ namespace GameAssets.Scripts.ActionPhase
         
         public static event Action<Polyomino> OnPolyominoSuccessfullyPlaced;
 
-        public void SetUp(int[,] cellsShape, Cell cellPrefab, Vector2 hoverExtraDistance)
+        public void SetUp(int[,] cellsShape, Cell.CellColorData cellColorData)
         {
             CellsShape = cellsShape;
-            _hoverExtraDistance = hoverExtraDistance;
             _initialLayerOrder = sortingGroup.sortingOrder;
 
             SetColliderDimensions(cellsShape);
             
-            CreateCells(cellsShape, cellPrefab);
+            CreateCells(cellsShape, cellColorData);
             
             if (Camera.main != null && Camera.main.GetComponent<PhysicsRaycaster>() == null)
                 Log.Error("Polyomino", "Main camera doesn't have a PhysicsRaycaster component, which is required for the drag and drop system to work");
@@ -59,7 +60,7 @@ namespace GameAssets.Scripts.ActionPhase
         }
 
 
-        private void CreateCells(int[,] cellsShape, Cell cellPrefab)
+        private void CreateCells(int[,] cellsShape, Cell.CellColorData cellColorData)
         {
             _cells = new Cell[cellsShape.GetLength(0), cellsShape.GetLength(1)];
             _cellsCount = 0;
@@ -76,7 +77,7 @@ namespace GameAssets.Scripts.ActionPhase
                     if(cellsShape[r, c] == 0)
                         continue;
                     
-                    var newCell = Instantiate(cellPrefab, cellsContainer);
+                    var newCell = ActionPhaseManager.Instance.cellFactory.CreateCell(cellsContainer, cellColorData);
                     var cellRectTransform = newCell.GetComponent<Transform>();
                     
                     cellRectTransform.localPosition = new Vector3(c * cellSize.x - polyominoCenter.x + cellCenter.x, 
@@ -86,6 +87,11 @@ namespace GameAssets.Scripts.ActionPhase
                     _cellsCount++;
                 }
             }
+        }
+
+        public void SetHoverExtraDistance(Vector2 hoverExtraDistance)
+        {
+            _hoverExtraDistance = hoverExtraDistance;
         }
 
         /*public Cell GetCell(int r, int c)

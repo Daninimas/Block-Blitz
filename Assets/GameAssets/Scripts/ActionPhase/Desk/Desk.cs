@@ -73,10 +73,8 @@ namespace GameAssets.Scripts.ActionPhase
 
             for (int i = 0; i < usablePolyominoesPositions; i++)
             {
-                int figureIndex = Random.Range(0, _deskModel.data.cellsShapes.Length);
-                
-                var newPolyomino = _deskView.InstantiatePolyominoInUsablePosition(_deskModel.data.polyominoPrefab, i);
-                newPolyomino.SetUp(_deskModel.data.cellsShapes[figureIndex], _deskModel.data.cellPrefab, _deskModel.data.polyominoHoverExtraDistance);
+                var newPolyomino = _deskView.InstantiatePolyominoInUsablePosition(i);
+                newPolyomino.SetHoverExtraDistance(PolyominoHoverExtraDistance);
                 
                 _usablePolyominoes.Add(newPolyomino);
             }

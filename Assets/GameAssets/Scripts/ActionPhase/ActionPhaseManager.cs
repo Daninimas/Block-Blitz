@@ -9,7 +9,10 @@ namespace GameAssets.Scripts.ActionPhase
 {
     public class ActionPhaseManager : Singleton<ActionPhaseManager>, IManageable
     {
+        [Header("Factories")]
         public BoardCellsFactory boardCellsFactory;
+        public CellFactory cellFactory;
+        public PolyominoFactory polyominoFactory;
         
         [Space(10)]
         [Header("Board configuration")]
