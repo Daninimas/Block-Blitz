@@ -33,5 +33,21 @@ namespace GameAssets.Scripts.Tools
             // Convertimos a world position considerando rotación, escala y posición
             return rectTransform.TransformPoint(localTopLeft);
         }
+        
+        public static CanvasGroup DisableInteraction(this CanvasGroup canvasGroup, bool hideView = false)
+        {
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.alpha = hideView ? 0 : 1;
+            return canvasGroup;
+        }
+        
+        public static CanvasGroup EnableInteraction(this CanvasGroup canvasGroup)
+        {
+            canvasGroup.blocksRaycasts = true;
+            canvasGroup.interactable = true;
+            canvasGroup.alpha = 1;
+            return canvasGroup;
+        }
     }
 }

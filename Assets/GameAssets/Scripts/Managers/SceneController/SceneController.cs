@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 /// Manages game scenes transitions.
 /// </summary>
 
-namespace Metrobots.Plugins.SceneController
+namespace GameAssets.Scripts.Managers.SceneController
 {
     public class SceneController : Singleton<SceneController>
     {
@@ -48,14 +48,14 @@ namespace Metrobots.Plugins.SceneController
         }
         private void OnEnable()
         {
-            SceneManager.sceneLoaded += InvokeOnSceneLoaded;
-            SceneManager.sceneUnloaded += InvokeOnSceneUnloaded;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += InvokeOnSceneLoaded;
+            UnityEngine.SceneManagement.SceneManager.sceneUnloaded += InvokeOnSceneUnloaded;
         }
         
         private void OnDisable()
         {
-            SceneManager.sceneLoaded -= InvokeOnSceneLoaded;
-            SceneManager.sceneUnloaded -= InvokeOnSceneUnloaded;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= InvokeOnSceneLoaded;
+            UnityEngine.SceneManagement.SceneManager.sceneUnloaded -= InvokeOnSceneUnloaded;
         }
 
         private void InvokeOnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
@@ -82,7 +82,7 @@ namespace Metrobots.Plugins.SceneController
 
         public void LoadScene(SceneName scene, float waitTime = 0, bool forceLoad = true)
         {
-            if (forceLoad == false && SceneManager.GetSceneByBuildIndex((int)scene).isLoaded) return;
+            if (forceLoad == false && UnityEngine.SceneManagement.SceneManager.GetSceneByBuildIndex((int)scene).isLoaded) return;
             
             prevScene = currentScene;
             
@@ -103,11 +103,11 @@ namespace Metrobots.Plugins.SceneController
             BeforeSceneLoad?.Invoke(scene);
             
             _intermediateSceneLoaded = false;
-            SceneManager.LoadScene((int)SceneName.Intermediate, LoadSceneMode.Single);
+            UnityEngine.SceneManagement.SceneManager.LoadScene((int)SceneName.Intermediate, LoadSceneMode.Single);
 
             yield return new WaitUntil(() => _intermediateSceneLoaded);
             
-            SceneManager.LoadScene((int)scene, mode);
+            UnityEngine.SceneManagement.SceneManager.LoadScene((int)scene, mode);
 
             currentScene = scene;
             _canChangeScene = true;
