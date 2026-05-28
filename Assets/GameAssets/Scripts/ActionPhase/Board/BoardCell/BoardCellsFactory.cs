@@ -4,7 +4,7 @@ namespace GameAssets.Scripts.ActionPhase
 {
     public class BoardCellsFactory : MonoBehaviour
     {
-        [SerializeField] private BoardCell cellPrefab;
+        [SerializeField] private BoardCellView boardCellPrefab;
 
         public BoardCell[,] CreateBoardCells(Vector2Int gridSize, Transform cellsParent)
         {
@@ -17,12 +17,14 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 for (var r = 0; r < maxRows; r++)
                 {
-                    BoardCell newBoardCell = Instantiate(cellPrefab, cellsParent);
+                    BoardCellView newBoardCellView = Instantiate(boardCellPrefab, cellsParent);
                     
-                    newBoardCell.Initialize();
+                    BoardCell newBoardCell = new BoardCell.Builder()
+                        .Build(newBoardCellView);  
+                    
                     newGrid[r, c] = newBoardCell;
                     
-                    SetCellInPosition(newBoardCell.transform, r, c, gridSize);
+                    SetCellInPosition(newBoardCellView.transform, r, c, gridSize);
                 }
             }
             
@@ -31,7 +33,7 @@ namespace GameAssets.Scripts.ActionPhase
 
         private void SetCellInPosition(Transform cellTransform, int r, int c, Vector2Int gridSize)
         {
-            Vector2 cellSize = ActionPhaseManager.Instance.CellSize;
+            Vector2 cellSize = ActionPhaseManager.Instance.BlockSize;
             Vector2 cellCenter = new Vector2(cellSize.x / 2f, cellSize.y / 2f);
             
             Vector2 topLeftCorner = new Vector2(gridSize.x * cellSize.x / 2f, gridSize.y * cellSize.y / 2f);

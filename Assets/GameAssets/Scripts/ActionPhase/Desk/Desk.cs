@@ -100,7 +100,7 @@ namespace GameAssets.Scripts.ActionPhase
             foreach (var usablePolyomino in _usablePolyominoes)
             {
                 canPlaceAnyPolyomino = 
-                    ActionPhaseManager.Instance.board.CheckIfPolyominoCanBePlacedInAllGrid(usablePolyomino.CellsShape);
+                    ActionPhaseManager.Instance.board.CheckIfPolyominoCanBePlacedInAllGrid(usablePolyomino.blocksShape);
                 
                 if (canPlaceAnyPolyomino)
                     break;

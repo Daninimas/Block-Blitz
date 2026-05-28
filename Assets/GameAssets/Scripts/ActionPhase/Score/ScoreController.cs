@@ -67,7 +67,7 @@ namespace GameAssets.Scripts.ActionPhase.Score
 
         private void UpdateCurrentScoreAfterPolyominoPlaced(Polyomino placedPolyomino)
         {
-            uint polyominoCellsCount = placedPolyomino.GetCellsCount();
+            uint polyominoCellsCount = placedPolyomino.GetBlocksCount();
             
             CurrentScore += (int)polyominoCellsCount;
             _scoreView.UpdateScoreText(CurrentScore);

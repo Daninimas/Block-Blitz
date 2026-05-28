@@ -11,7 +11,7 @@ namespace GameAssets.Scripts.ActionPhase
     {
         [Header("Factories")]
         public BoardCellsFactory boardCellsFactory;
-        public CellFactory cellFactory;
+        [FormerlySerializedAs("cellFactory")] public BlockFactory blockFactory;
         public PolyominoFactory polyominoFactory;
         
         [Space(10)]
@@ -31,10 +31,11 @@ namespace GameAssets.Scripts.ActionPhase
         [SerializeField] ScoreView scoreView;
         public ScoreController scoreController;
         
+        [FormerlySerializedAs("cellSize")]
         [Space(10)]
         [Header("Common game configuration")]
-        public Vector2 cellSize = Vector2.one;
-        public Vector2 CellSize => cellSize;
+        public Vector2 blockSize = Vector2.one;
+        public Vector2 BlockSize => blockSize;
 
 
         //TODO: Delete

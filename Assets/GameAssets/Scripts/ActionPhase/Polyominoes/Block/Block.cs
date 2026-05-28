@@ -1,11 +1,12 @@
+using System;
 using UnityEngine;
 
 namespace GameAssets.Scripts.ActionPhase
 {
-    public class Cell : MonoBehaviour
+    public class Block : MonoBehaviour
     {
         [System.Serializable]
-        public class CellColorData
+        public class BlockColorData : ICloneable
         {
             public Color mainColor;
             public Color glowColor;
@@ -14,6 +15,10 @@ namespace GameAssets.Scripts.ActionPhase
             public Color bottomColor;
             public Color leftColor;
             public Color rightColor;
+            public object Clone()
+            {
+                return this.MemberwiseClone();
+            }
         }
         
         [SerializeField] private SpriteRenderer mainSpriteRenderer;
@@ -24,20 +29,20 @@ namespace GameAssets.Scripts.ActionPhase
         [SerializeField] private SpriteRenderer leftSpriteRenderer;
         [SerializeField] private SpriteRenderer rightSpriteRenderer;
         
-        private CellColorData _currentCellColorData;
+        private BlockColorData _currentBlockColorData;
 
 
-        public void SetCellColors(CellColorData cellColorData)
+        public void SetBlockColors(BlockColorData blockColorData)
         {
-            _currentCellColorData = cellColorData;
+            _currentBlockColorData = blockColorData;
             
-            mainSpriteRenderer.color = _currentCellColorData.mainColor;
-            glowSpriteRenderer.color = _currentCellColorData.glowColor;
-            semiGlowSpriteRenderer.color = _currentCellColorData.semiGlowColor;
-            topSpriteRenderer.color = _currentCellColorData.topColor;
-            bottomSpriteRenderer.color = _currentCellColorData.bottomColor;
-            leftSpriteRenderer.color = _currentCellColorData.leftColor;
-            rightSpriteRenderer.color = _currentCellColorData.rightColor;
+            mainSpriteRenderer.color = _currentBlockColorData.mainColor;
+            glowSpriteRenderer.color = _currentBlockColorData.glowColor;
+            semiGlowSpriteRenderer.color = _currentBlockColorData.semiGlowColor;
+            topSpriteRenderer.color = _currentBlockColorData.topColor;
+            bottomSpriteRenderer.color = _currentBlockColorData.bottomColor;
+            leftSpriteRenderer.color = _currentBlockColorData.leftColor;
+            rightSpriteRenderer.color = _currentBlockColorData.rightColor;
         }
     }
 }

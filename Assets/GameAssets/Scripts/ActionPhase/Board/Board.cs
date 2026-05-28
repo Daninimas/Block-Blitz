@@ -48,10 +48,10 @@ namespace GameAssets.Scripts.ActionPhase
             ClearHoveredCells();
             ClearHighlightedRowsAndColumns();
 
-            if (!_boardView.IsPositionInsideRect(polyomino.CellsContainerTransform.position))
+            if (!_boardView.IsPositionInsideRect(polyomino.BlockContainerTransform.position))
                 return false;
             
-            Vector3 polyominoTopLeftCorner = polyomino.GetTopLeftCellPosition();
+            Vector3 polyominoTopLeftCorner = polyomino.GetTopLeftBlockPosition();
             
             var localRelativePos = _boardView.GetRelativePosToTopLeftCorner(polyominoTopLeftCorner);
             Vector2Int gridPos = new ()
@@ -60,15 +60,15 @@ namespace GameAssets.Scripts.ActionPhase
                 y = (int)Tools.Tools.NormalizeValues(0f, _grid.GetLength(0), 0f, 1f, localRelativePos.y)
             };
 
-            (bool, List<Vector2Int>) canPlacePolyominoInPos = CanPlacePolyominoInPos(polyomino.CellsShape, gridPos);
+            (bool, List<Vector2Int>) canPlacePolyominoInPos = CanPlacePolyominoInPos(polyomino.blocksShape, gridPos);
             
             if(!canPlacePolyominoInPos.Item1)
                 return false;
             
             SetHoveredCells(canPlacePolyominoInPos.Item2);
                 
-            HighlightFullRows();
-            HighlightFullColumns();
+            HighlightFullRows(polyomino.blocksColorData);
+            HighlightFullColumns(polyomino.blocksColorData);
 
             return true;
         }
@@ -117,7 +117,7 @@ namespace GameAssets.Scripts.ActionPhase
             
             if(gridPosCol < 0 || gridPosCol >= _grid.GetLength(1) 
                              || gridPosRow < 0 || gridPosRow >= _grid.GetLength(0)
-                             || _grid[gridPosCol, gridPosRow].CurrentState == CellState.Used)
+                             || _grid[gridPosCol, gridPosRow].currentState == CellState.Used)
                 return false;
             
             return true;
@@ -127,8 +127,8 @@ namespace GameAssets.Scripts.ActionPhase
         {
             foreach (var hoveredCell in _hoveredCells)
             {
-                if(hoveredCell.CurrentState == CellState.Hovered)
-                    hoveredCell.SetState(CellState.Free);
+                if(hoveredCell.currentState == CellState.Hovered)
+                    hoveredCell.SetFree();
             }
             _hoveredCells.Clear();
         }
@@ -138,34 +138,34 @@ namespace GameAssets.Scripts.ActionPhase
             foreach (var hoveredCellIndex in hoveredCellsIndex)
             {
                 BoardCell hoveredCell = _grid[hoveredCellIndex.y, hoveredCellIndex.x];
-                hoveredCell.SetState(CellState.Hovered);
+                hoveredCell.SetHovered();
                 _hoveredCells.Add(hoveredCell);
             }
         }
 
         #region Confirm polyomino placement
 
-        public void PlacePolyominoInLastHoveredPos()
+        public void PlacePolyominoInLastHoveredPos(Polyomino polyomino)
         {
-            ConfirmHoveredCellsAsPlacedPolyomino();
+            ConfirmHoveredCellsAsPlacedPolyomino(polyomino);
         }
 
-        private void ConfirmHoveredCellsAsPlacedPolyomino()
+        private void ConfirmHoveredCellsAsPlacedPolyomino(Polyomino polyomino)
         {
-            SetHoveredCellsAsUsedWithAnimation();
+            SetHoveredCellsAsUsedWithAnimation(polyomino.blocksColorData);
             ClearHoveredCells();
             
             ScoreFullRowsAndColumns();
             ClearHighlightedRowsAndColumns();
         }
 
-        private void SetHoveredCellsAsUsedWithAnimation()
+        private void SetHoveredCellsAsUsedWithAnimation(Block.BlockColorData blocksColorData)
         {
             float currentDelay = _boardModel.boardData.useCellsAnimationStartDelay;
             
             foreach (var hoveredCell in _hoveredCells)
             {
-                hoveredCell.SetState(CellState.Used, currentDelay);
+                hoveredCell.SetUsed(blocksColorData, currentDelay);
                 
                 currentDelay += _boardModel.boardData.useCellsAnimationInterDelay;
             }
@@ -178,7 +178,7 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 for (int c = 0; c < _grid.GetLength(1); c++)
                 {
-                    _grid[highlightedFullRow, c].SetState(CellState.Free);
+                    _grid[highlightedFullRow, c].SetFree();
                 }
             }
             
@@ -187,7 +187,7 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 for (int r = 0; r < _grid.GetLength(0); r++)
                 {
-                    _grid[r, highlightedFullColumn].SetState(CellState.Free);
+                    _grid[r, highlightedFullColumn].SetFree();
                 }
             }
             
@@ -204,25 +204,20 @@ namespace GameAssets.Scripts.ActionPhase
 
         private void ClearHighlightedRowsAndColumns()
         {
-            UnhighlightUsedCells();
+            UpdateHighlightedToRowCells(false);
+            UpdateHighlightedToColumnCells(false);
             
             _highlightedFullRows.Clear();
             _highlightedFullColumns.Clear();
         }
 
-        private void UnhighlightUsedCells()
-        {
-            SetVisualStateToHighlightedRow(VisualCellState.Used);
-            SetVisualStateToHighlightedColumn(VisualCellState.Used);
-        }
-
         #region Rows
 
-        private void HighlightFullRows()
+        private void HighlightFullRows(Block.BlockColorData polyominoBlocksColorData)
         {
             CalculateHighlightedFullRows();
             
-            SetVisualStateToHighlightedRow(VisualCellState.Highlighted);
+            UpdateHighlightedToRowCells(true, polyominoBlocksColorData);
         }
 
         private void CalculateHighlightedFullRows()
@@ -232,7 +227,7 @@ namespace GameAssets.Scripts.ActionPhase
                 bool isFullRow = true;
                 for (int c = 0; c < _grid.GetLength(1); c++)
                 {
-                    if (_grid[r, c].CurrentState != CellState.Used && _grid[r, c].CurrentState != CellState.Hovered)
+                    if (_grid[r, c].currentState != CellState.Used && _grid[r, c].currentState != CellState.Hovered)
                     {
                         isFullRow = false;
                         break;
@@ -244,16 +239,18 @@ namespace GameAssets.Scripts.ActionPhase
             }
         }
 
-        private void SetVisualStateToHighlightedRow(VisualCellState visualState)
+        private void UpdateHighlightedToRowCells(bool isHighlighted, Block.BlockColorData blocksColorData = null)
         {
-            foreach (var rowToHighlight in _highlightedFullRows)
+            foreach (var rowToUpdateHighlight in _highlightedFullRows)
             {
                 for (int c = 0; c < _grid.GetLength(1); c++)
                 {
-                    var cell = _grid[rowToHighlight, c];
+                    var cell = _grid[rowToUpdateHighlight, c];
                     
-                    if(cell.CurrentState == CellState.Used)
-                        cell.UpdateVisualState(visualState);
+                    if(isHighlighted)
+                        cell.SetHighlighted(blocksColorData);
+                    else
+                        cell.SetUnhighlighted();
                 }
             }
         }
@@ -264,11 +261,11 @@ namespace GameAssets.Scripts.ActionPhase
 
         #region Columns
 
-        private void HighlightFullColumns()
+        private void HighlightFullColumns(Block.BlockColorData polyominoBlocksColorData)
         {
             CalculateHighlightFullColumns();
 
-            SetVisualStateToHighlightedColumn(VisualCellState.Highlighted);
+            UpdateHighlightedToColumnCells(true, polyominoBlocksColorData);
         }
         
         private void CalculateHighlightFullColumns()
@@ -278,7 +275,7 @@ namespace GameAssets.Scripts.ActionPhase
                 bool isFullColumn = true;
                 for (int r = 0; r < _grid.GetLength(0); r++)
                 {
-                    if (_grid[r, c].CurrentState != CellState.Used && _grid[r, c].CurrentState != CellState.Hovered)
+                    if (_grid[r, c].currentState != CellState.Used && _grid[r, c].currentState != CellState.Hovered)
                     {
                         isFullColumn = false;
                         break;
@@ -290,7 +287,7 @@ namespace GameAssets.Scripts.ActionPhase
             }
         }
         
-        private void SetVisualStateToHighlightedColumn(VisualCellState visualState)
+        private void UpdateHighlightedToColumnCells(bool isHighlighted, Block.BlockColorData blocksColorData = null)
         {
             foreach (var columnToHighlight in _highlightedFullColumns)
             {
@@ -298,8 +295,10 @@ namespace GameAssets.Scripts.ActionPhase
                 {
                     var cell = _grid[r, columnToHighlight];
                     
-                    if(cell.CurrentState == CellState.Used)
-                        cell.UpdateVisualState(visualState);
+                    if(isHighlighted)
+                        cell.SetHighlighted(blocksColorData);
+                    else
+                        cell.SetUnhighlighted();
                 }
             }
         }

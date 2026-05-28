@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using GameAssets.Scripts.Tools;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GameAssets.Scripts.ActionPhase
 {
@@ -8,7 +9,7 @@ namespace GameAssets.Scripts.ActionPhase
     {
         [SerializeField] private Polyomino polyominoPrefab;
         
-        [SerializeField] private List<Cell.CellColorData> polyominoCellsColors;
+        [FormerlySerializedAs("polyominoCellsColors")] [SerializeField] private List<Block.BlockColorData> polyominoBlocksColors;
         
         [SerializeField] private readonly int[][,] polyominoShapes =
         {
@@ -56,7 +57,7 @@ namespace GameAssets.Scripts.ActionPhase
         public Polyomino CreateRandomPolyomino(Transform parent)
         {
             int figureIndex = Random.Range(0, polyominoShapes.Length);
-            int colorIndex = Random.Range(0, polyominoCellsColors.Count);
+            int colorIndex = Random.Range(0, polyominoBlocksColors.Count);
 
             int[,] shape = GetPolyominoShape(figureIndex);
             var cellsColorData = GetPolyominoCellsColor(colorIndex);
@@ -79,15 +80,15 @@ namespace GameAssets.Scripts.ActionPhase
             return polyominoShapes[figureIndex];
         }
         
-        private Cell.CellColorData GetPolyominoCellsColor(int colorIndex)
+        private Block.BlockColorData GetPolyominoCellsColor(int colorIndex)
         {
-            if(colorIndex < 0 || colorIndex >= polyominoCellsColors.Count)
+            if(colorIndex < 0 || colorIndex >= polyominoBlocksColors.Count)
             {
                 Log.Error("PolyominoFactory", $"Trying to get a polyomino cells color with invalid index. colorIndex: {colorIndex}");
                 return null;
             }
             
-            return polyominoCellsColors[colorIndex];
+            return polyominoBlocksColors[colorIndex];
         }
     }
 }

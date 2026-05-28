@@ -13,7 +13,7 @@ namespace GameAssets.Scripts.ActionPhase
         public void InitializeData(Vector2Int gridSize)
         {
             var center = cellsParent.position;
-            var cellSize = ActionPhaseManager.Instance.CellSize;
+            var cellSize = ActionPhaseManager.Instance.BlockSize;
             
             var topLeftPos = new Vector3(center.x - (gridSize.x/2f * cellSize.x), 
                 center.y + (gridSize.y/2f * cellSize.y), 

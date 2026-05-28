@@ -1,67 +1,81 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace GameAssets.Scripts.ActionPhase
 {
     public class BoardCellView : MonoBehaviour
     {
-        [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private SpriteRenderer cellSpriteRenderer;
+        [SerializeField] private Block usedBlock;
         
         [Space(10)]
         [Header("Visual states")]
-        [Header("Normal")]
-        [SerializeField] private Color normalColor;
-        [SerializeField] private Sprite normalSprite;
-        [Header("Used")]
-        [SerializeField] private Color usedColor;
+        [Header("Empty")]
+        [SerializeField] private Color emptyColor;
         [Header("Hover")]
         [SerializeField] private Color hoverColor;
-        [Header("Highlighted")]
-        [SerializeField] private Color highlightedColor;
+        
+        private Coroutine _updateVisualsCoroutine;
 
 
         #region Visual state
 
-        public void SetVisualState(VisualCellState state)
+        public void SetEmptyVisuals()
         {
-            switch (state)
-            {
-                case VisualCellState.Normal:
-                    SetNormalVisuals();
-                    break;
-                case VisualCellState.Hovered:
-                    SetHoverVisuals();
-                    break;
-                case VisualCellState.Used:
-                    SetUsedVisuals();
-                    break;
-                case VisualCellState.Highlighted:
-                    SetHighlightedVisuals();
-                    break;
-            }
+            StopPreviousUpdateVisualsCoroutine();
+            
+            usedBlock.gameObject.SetActive(false);
+            cellSpriteRenderer.color = emptyColor;
+        }
+        
+        public void SetHighlightedVisuals(Block.BlockColorData blocksColorData)
+        {
+            StopPreviousUpdateVisualsCoroutine();
+            
+            usedBlock.SetBlockColors(blocksColorData);
+        }
+        
+        public void SetUsedVisuals(Block.BlockColorData blocksColorData)
+        {
+            StopPreviousUpdateVisualsCoroutine();
+            
+            usedBlock.gameObject.SetActive(true);
+            usedBlock.SetBlockColors(blocksColorData);
+        }
+        
+        public void SetUsedVisualsWithDelay(Block.BlockColorData blocksColorData, float delay)
+        {
+            StopPreviousUpdateVisualsCoroutine();
+
+            _updateVisualsCoroutine = StartCoroutine(WaitAndSetUsedVisuals(blocksColorData, delay));
+        }
+        
+        private IEnumerator WaitAndSetUsedVisuals(Block.BlockColorData blocksColorData, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            
+            usedBlock.gameObject.SetActive(true);
+            usedBlock.SetBlockColors(blocksColorData);
+            
+            _updateVisualsCoroutine = null;
         }
 
-        private void SetNormalVisuals()
+        public void SetHoveredVisuals()
         {
-            spriteRenderer.color = normalColor;
-            spriteRenderer.sprite = normalSprite;
-        }
-        
-        private void SetHoverVisuals()
-        {
-            spriteRenderer.color = hoverColor;
-        }
-        
-        private void SetUsedVisuals()
-        {
-            spriteRenderer.color = usedColor;
-        }
-        
-        private void SetHighlightedVisuals()
-        {
-            spriteRenderer.color = highlightedColor;
+            StopPreviousUpdateVisualsCoroutine();
+            
+            cellSpriteRenderer.color = hoverColor;
         }
 
         #endregion
+
+        private void StopPreviousUpdateVisualsCoroutine()
+        {
+            if (_updateVisualsCoroutine != null)
+            {
+                StopCoroutine(_updateVisualsCoroutine);
+                _updateVisualsCoroutine = null;
+            }
+        }
     }
 }

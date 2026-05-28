@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b4ba78121f345d9920a18e31d2ac21d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 6924651489198919720, guid: b02eb1015a22ea74f855ef9d4700fd92, type: 3}
+  boardCellPrefab: {fileID: 3948344636108557350, guid: b02eb1015a22ea74f855ef9d4700fd92, type: 3}
 --- !u!4 &238925905
 Transform:
   m_ObjectHideFlags: 0
@@ -956,7 +956,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   polyominoPrefab: {fileID: 3841865788381073521, guid: ac9bb64266f569543b3a9453313bc09c, type: 3}
-  polyominoCellsColors:
+  polyominoBlocksColors:
   - mainColor: {r: 0, g: 0.8000001, b: 0.9568628, a: 1}
     glowColor: {r: 0.5921569, g: 0.98823535, b: 0.98823535, a: 1}
     semiGlowColor: {r: 0.2509804, g: 0.8980393, b: 0.9294118, a: 1}
@@ -1158,7 +1158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26c9a785e3824299b33cda1f8c0f4f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 8077726012079706956, guid: 395b7f5bef6f8c741ae9816179bd6d26, type: 3}
+  blockPrefab: {fileID: 8077726012079706956, guid: 395b7f5bef6f8c741ae9816179bd6d26, type: 3}
 --- !u!4 &1415352901
 Transform:
   m_ObjectHideFlags: 0
@@ -1612,14 +1612,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardCellsFactory: {fileID: 238925904}
-  cellFactory: {fileID: 1415352900}
+  blockFactory: {fileID: 1415352900}
   polyominoFactory: {fileID: 1301962657}
   boardView: {fileID: 1594847624}
   boardData: {fileID: 11400000, guid: 214c8284f1070c045811608780610c6a, type: 2}
   deskView: {fileID: 539068040}
   deskData: {fileID: 11400000, guid: 785650e2bbb98c842b94ba725e0dfd10, type: 2}
   scoreView: {fileID: 1805083662}
-  cellSize: {x: 0.48, y: 0.48}
+  blockSize: {x: 0.48, y: 0.48}
 --- !u!4 &1987555790
 Transform:
   m_ObjectHideFlags: 0

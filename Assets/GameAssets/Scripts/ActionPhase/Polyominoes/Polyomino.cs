@@ -3,13 +3,14 @@ using GameAssets.Scripts.Tools;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 namespace GameAssets.Scripts.ActionPhase
 {
     public class Polyomino : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        [SerializeField] Transform cellsContainer;
-        public Transform CellsContainerTransform => cellsContainer;
+        [FormerlySerializedAs("cellsContainer")] [SerializeField] Transform blockContainer;
+        public Transform BlockContainerTransform => blockContainer;
         
         [SerializeField] BoxCollider2D boxCollider;
         [SerializeField] SortingGroup sortingGroup;
@@ -17,12 +18,12 @@ namespace GameAssets.Scripts.ActionPhase
         private int _initialLayerOrder;
         
 
-        public int[,] CellsShape { private set; get; }
+        public int[,] blocksShape { private set; get; }
         
-        private Cell[,] _cells;
-        private uint _cellsCount;
+        private Block[,] _blocks;
+        private uint _blocksCount;
         
-        private Cell.CellColorData _cellsColorData;
+        public Block.BlockColorData blocksColorData { private set; get; }
         
         private Vector2 _hoverExtraDistance;
         
@@ -34,14 +35,15 @@ namespace GameAssets.Scripts.ActionPhase
         
         public static event Action<Polyomino> OnPolyominoSuccessfullyPlaced;
 
-        public void SetUp(int[,] cellsShape, Cell.CellColorData cellColorData)
+        public void SetUp(int[,] blocksShape, Block.BlockColorData blockColorData)
         {
-            CellsShape = cellsShape;
+            this.blocksShape = blocksShape;
+            this.blocksColorData = blockColorData;
             _initialLayerOrder = sortingGroup.sortingOrder;
 
-            SetColliderDimensions(cellsShape);
+            SetColliderDimensions(blocksShape);
             
-            CreateCells(cellsShape, cellColorData);
+            CreateBlocks(blocksShape, blockColorData);
             
             if (Camera.main != null && Camera.main.GetComponent<PhysicsRaycaster>() == null)
                 Log.Error("Polyomino", "Main camera doesn't have a PhysicsRaycaster component, which is required for the drag and drop system to work");
@@ -49,42 +51,42 @@ namespace GameAssets.Scripts.ActionPhase
                 _mainCam = Camera.main;
         }
 
-        private void SetColliderDimensions(int[,] cellsShape)
+        private void SetColliderDimensions(int[,] blocksShape)
         {
-            var cellRect = ActionPhaseManager.Instance.CellSize;
+            var blockRect = ActionPhaseManager.Instance.BlockSize;
             
-            float width = cellsShape.GetLength(1) * cellRect.x;
-            float height = cellsShape.GetLength(0) * cellRect.y;
+            float width = blocksShape.GetLength(1) * blockRect.x;
+            float height = blocksShape.GetLength(0) * blockRect.y;
             
             boxCollider.size = new Vector2(width, height);
         }
 
 
-        private void CreateCells(int[,] cellsShape, Cell.CellColorData cellColorData)
+        private void CreateBlocks(int[,] blocksShape, Block.BlockColorData blockColorData)
         {
-            _cells = new Cell[cellsShape.GetLength(0), cellsShape.GetLength(1)];
-            _cellsCount = 0;
+            _blocks = new Block[blocksShape.GetLength(0), blocksShape.GetLength(1)];
+            _blocksCount = 0;
             
-            var cellSize = ActionPhaseManager.Instance.CellSize;
-            Vector2 polyominoCenter = new Vector2(cellSize.x * cellsShape.GetLength(1) / 2f, 
-                cellSize.y * cellsShape.GetLength(0) / 2f);
-            Vector2 cellCenter = new Vector2(cellSize.x / 2f, cellSize.y / 2f);
+            var blockSize = ActionPhaseManager.Instance.BlockSize;
+            Vector2 polyominoCenter = new Vector2(blockSize.x * blocksShape.GetLength(1) / 2f, 
+                blockSize.y * blocksShape.GetLength(0) / 2f);
+            Vector2 blockCenter = new Vector2(blockSize.x / 2f, blockSize.y / 2f);
             
-            for (int r = 0; r < cellsShape.GetLength(0); r++)
+            for (int r = 0; r < blocksShape.GetLength(0); r++)
             {
-                for (int c = 0; c < cellsShape.GetLength(1); c++)
+                for (int c = 0; c < blocksShape.GetLength(1); c++)
                 {
-                    if(cellsShape[r, c] == 0)
+                    if(blocksShape[r, c] == 0)
                         continue;
                     
-                    var newCell = ActionPhaseManager.Instance.cellFactory.CreateCell(cellsContainer, cellColorData);
-                    var cellRectTransform = newCell.GetComponent<Transform>();
+                    var newBlock = ActionPhaseManager.Instance.blockFactory.CreateBlock(blockContainer, blockColorData);
+                    var blockTransform = newBlock.GetComponent<Transform>();
                     
-                    cellRectTransform.localPosition = new Vector3(c * cellSize.x - polyominoCenter.x + cellCenter.x, 
-                        -r * cellSize.y + polyominoCenter.y - cellCenter.y, 0f);
+                    blockTransform.localPosition = new Vector3(c * blockSize.x - polyominoCenter.x + blockCenter.x, 
+                        -r * blockSize.y + polyominoCenter.y - blockCenter.y, 0f);
 
-                    _cells[r, c] = newCell;
-                    _cellsCount++;
+                    _blocks[r, c] = newBlock;
+                    _blocksCount++;
                 }
             }
         }
@@ -93,36 +95,19 @@ namespace GameAssets.Scripts.ActionPhase
         {
             _hoverExtraDistance = hoverExtraDistance;
         }
-
-        /*public Cell GetCell(int r, int c)
-        {
-            if (_cells == null)
-            {
-                Log.Warning("Polyomino", "Trying to get a cell when the cells array is null");
-                return null;
-            }
-
-            if (r < 0 || r >= _cells.GetLength(0) || c >= _cells.GetLength(1) || c < 0)
-            {
-                Log.Warning("Polyomino", $"Trying to get a cell with invalid indexes. r: {r}, c: {c}");
-                return null;
-            }
-            
-            return _cells[r, c];
-        }*/
         
-        public Vector3 GetTopLeftCellPosition()
+        public Vector3 GetTopLeftBlockPosition()
         {
-            Vector3 topLeftCellPosition = new Vector3();
-            var cellSize = ActionPhaseManager.Instance.CellSize;
+            Vector3 topLeftBlockPosition = new Vector3();
+            var blockSize = ActionPhaseManager.Instance.BlockSize;
             
-            Vector2 polyominoCenter = cellsContainer.position;
-            Vector2 cellCenter = new Vector2(cellSize.x / 2f, cellSize.y / 2f);
+            Vector2 polyominoCenter = blockContainer.position;
+            Vector2 blockCenter = new Vector2(blockSize.x / 2f, blockSize.y / 2f);
             
-            topLeftCellPosition = new Vector3(polyominoCenter.x - CellsShape.GetLength(1) * cellSize.x / 2f + cellCenter.x, 
-                polyominoCenter.y + CellsShape.GetLength(0) * cellSize.y / 2f - cellCenter.y, 0f);
+            topLeftBlockPosition = new Vector3(polyominoCenter.x - blocksShape.GetLength(1) * blockSize.x / 2f + blockCenter.x, 
+                polyominoCenter.y + blocksShape.GetLength(0) * blockSize.y / 2f - blockCenter.y, 0f);
             
-            return topLeftCellPosition;
+            return topLeftBlockPosition;
         }
         
         #region Drag and Drop
@@ -150,7 +135,7 @@ namespace GameAssets.Scripts.ActionPhase
             Vector3 worldPos = _mainCam.ScreenToWorldPoint(eventData.position);
             worldPos.z = 0;
 
-            cellsContainer.position = worldPos + (Vector3)_hoverExtraDistance;
+            blockContainer.position = worldPos + (Vector3)_hoverExtraDistance;
         }
 
         private bool CheckIfCanBeDropped()
@@ -170,12 +155,12 @@ namespace GameAssets.Scripts.ActionPhase
 
             if (!_canBeDropped)
             {
-                cellsContainer.transform.localPosition = Vector3.zero;
+                blockContainer.transform.localPosition = Vector3.zero;
                 ActionPhaseManager.Instance.board.ClearHoveredCells();
                 return;
             }
             
-            ActionPhaseManager.Instance.board.PlacePolyominoInLastHoveredPos();
+            ActionPhaseManager.Instance.board.PlacePolyominoInLastHoveredPos(this);
             
             OnPolyominoSuccessfullyPlaced?.Invoke(this);
         }
@@ -196,9 +181,9 @@ namespace GameAssets.Scripts.ActionPhase
 
         #endregion
 
-        public uint GetCellsCount()
+        public uint GetBlocksCount()
         {
-            return _cellsCount;
+            return _blocksCount;
         }
     }
 }
