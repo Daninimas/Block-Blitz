@@ -37,16 +37,10 @@ namespace GameAssets.Scripts.ActionPhase
         [Header("Common game configuration")]
         public Vector2 blockSize = Vector2.one;
         public Vector2 BlockSize => blockSize;
-
-
-        //TODO: Delete
-        public void Start()
-        {
-            StartCoroutine(LoadAssets());
-        }
         
         
         public bool initialized { get; set; }
+        
         public IEnumerator LoadAssets()
         {
             // ------- WORLD ELEMENTS -------
@@ -65,6 +59,8 @@ namespace GameAssets.Scripts.ActionPhase
             scoreController = new ScoreController.Builder()
                 .Build(_hudScreen.scoreView);
             
+            
+            initialized = true;
             yield break;
         }
 
