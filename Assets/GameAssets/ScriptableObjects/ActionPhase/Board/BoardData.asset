@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: BoardData
   m_EditorClassIdentifier: 
   gridSize: {x: 8, y: 8}
+  useCellsAnimationStartDelay: 0.2
+  useCellsAnimationInterDelay: 0.05

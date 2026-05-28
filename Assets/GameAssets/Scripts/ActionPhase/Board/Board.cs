@@ -152,18 +152,22 @@ namespace GameAssets.Scripts.ActionPhase
 
         private void ConfirmHoveredCellsAsPlacedPolyomino()
         {
-            SetHoveredCellsAsUsed();
+            SetHoveredCellsAsUsedWithAnimation();
             ClearHoveredCells();
             
             ScoreFullRowsAndColumns();
             ClearHighlightedRowsAndColumns();
         }
 
-        private void SetHoveredCellsAsUsed()
+        private void SetHoveredCellsAsUsedWithAnimation()
         {
+            float currentDelay = _boardModel.boardData.useCellsAnimationStartDelay;
+            
             foreach (var hoveredCell in _hoveredCells)
             {
-                hoveredCell.SetState(CellState.Used);
+                hoveredCell.SetState(CellState.Used, currentDelay);
+                
+                currentDelay += _boardModel.boardData.useCellsAnimationInterDelay;
             }
         }
 
@@ -249,7 +253,7 @@ namespace GameAssets.Scripts.ActionPhase
                     var cell = _grid[rowToHighlight, c];
                     
                     if(cell.CurrentState == CellState.Used)
-                        cell.SetVisualState(visualState);
+                        cell.UpdateVisualState(visualState);
                 }
             }
         }
@@ -295,7 +299,7 @@ namespace GameAssets.Scripts.ActionPhase
                     var cell = _grid[r, columnToHighlight];
                     
                     if(cell.CurrentState == CellState.Used)
-                        cell.SetVisualState(visualState);
+                        cell.UpdateVisualState(visualState);
                 }
             }
         }

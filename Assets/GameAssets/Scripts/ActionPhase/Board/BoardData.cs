@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GameAssets.Scripts.ActionPhase
 {
@@ -6,5 +7,9 @@ namespace GameAssets.Scripts.ActionPhase
     public class BoardData : ScriptableObject
     {
         public Vector2Int gridSize = Vector2Int.one;
+        
+        [Header("Animation data")]
+        public float useCellsAnimationStartDelay;
+        public float useCellsAnimationInterDelay;
     }
 }
