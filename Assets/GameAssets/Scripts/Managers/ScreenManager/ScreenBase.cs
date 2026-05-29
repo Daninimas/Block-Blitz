@@ -8,6 +8,7 @@ namespace GameAssets.Scripts.Managers.ScreenManager
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class ScreenBase : MonoBehaviour, IScreen
     {
+        public bool isPersistant;
         public bool isVisible { get; set; }
         public bool wasOpened { get; set; }
         public Action OnShow { get; set; }

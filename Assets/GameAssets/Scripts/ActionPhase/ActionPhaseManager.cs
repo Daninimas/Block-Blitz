@@ -4,6 +4,7 @@ using GameAssets.Scripts.Managers.ScreenManager;
 using GameAssets.Scripts.Tools;
 using GameAssets.Scripts.Tools.Interfaces;
 using GameAssets.Scripts.UI.Screens;
+using GameAssets.Scripts.UI.Screens.Common;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -38,8 +39,24 @@ namespace GameAssets.Scripts.ActionPhase
         public Vector2 blockSize = Vector2.one;
         public Vector2 BlockSize => blockSize;
         
-        
         public bool initialized { get; set; }
+        
+        
+        #region Event subscription
+
+        private void SubscribeEvents()
+        {
+            UnsubscribeEvents();
+
+            desk.OnUnableToPlaceMorePolyominoes += ManageGameOver;
+        }
+
+        private void UnsubscribeEvents()
+        {
+            desk.OnUnableToPlaceMorePolyominoes -= ManageGameOver;
+        }
+
+        #endregion
         
         public IEnumerator LoadAssets()
         {
@@ -60,6 +77,10 @@ namespace GameAssets.Scripts.ActionPhase
                 .Build(_hudScreen.scoreView);
             
             
+            // ------- Finish initialization -------
+            SubscribeEvents();
+            
+            ScreenManager.Instance.Hide<LoadScreen>();
             initialized = true;
             yield break;
         }
@@ -68,5 +89,20 @@ namespace GameAssets.Scripts.ActionPhase
         {
             throw new System.NotImplementedException();
         }
+
+
+        #region Game over
+
+        private void ManageGameOver()
+        {
+            var screenData = new GameOverScreen.GameOverScreenData
+            {
+                finalScore = scoreController.CurrentScore
+            };
+            
+            ScreenManager.Instance.Show<GameOverScreen>(screenData);
+        }
+
+        #endregion
     }
 }

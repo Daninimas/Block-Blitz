@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GameAssets.Scripts.Tools;
 using UnityEngine;
@@ -12,6 +13,8 @@ namespace GameAssets.Scripts.ActionPhase
         public Vector2 PolyominoHoverExtraDistance => _deskModel.data.polyominoHoverExtraDistance;
         
         private readonly List<Polyomino> _usablePolyominoes = new List<Polyomino>();
+
+        public event Action OnUnableToPlaceMorePolyominoes;
 
 
         #region Event subscription
@@ -108,7 +111,8 @@ namespace GameAssets.Scripts.ActionPhase
 
             if (!canPlaceAnyPolyomino)
             {
-                Log.Trace("------------------ GAME OVER ------------------");
+                // Game over
+                OnUnableToPlaceMorePolyominoes?.Invoke();
             }
         }
 

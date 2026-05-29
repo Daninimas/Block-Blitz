@@ -6,7 +6,7 @@ namespace GameAssets.Scripts.Managers.ScreenManager
     {
         private void OnEnable()
         {
-            ScreenManager.Instance.root = this.gameObject.transform;
+            ScreenManager.Instance.SetScreensRoot(this);
         }
     }
 }

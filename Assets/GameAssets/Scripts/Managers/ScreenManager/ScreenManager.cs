@@ -12,9 +12,10 @@ namespace GameAssets.Scripts.Managers.ScreenManager
     {
         private Stack<ScreenBase> _currentOpenedScreens = new Stack<ScreenBase>();
 
-        private List<ScreenBase> _currentInstanciatedScreens = new List<ScreenBase>();
+        [SerializeField] private List<ScreenBase> _currentInstanciatedScreens = new List<ScreenBase>();
 
-        public Transform root;
+        public Transform screensRoot { get; private set; }
+        public Transform persistentScreensRoot;
 
         private const string route = "UI/Screens/";
         private const string prefix = "UI_";
@@ -39,11 +40,11 @@ namespace GameAssets.Scripts.Managers.ScreenManager
 
         #region Show
 
-        public T Show<T>(object data = null, Action OnShow = null) where T : ScreenBase
+        public T Show<T>(object data = null, bool isPersistant = false, Action OnShow = null) where T : ScreenBase
         {
             Log.Info("Screen", $"Trying to show {typeof(T)}");
 
-            ScreenBase screen = SetUpScreen(data, typeof(T));
+            ScreenBase screen = SetUpScreen(data, typeof(T), isPersistant);
 
             if (_currentOpenedScreens.Any())
                 _currentOpenedScreens.Peek()?.Annulate();
@@ -113,7 +114,7 @@ namespace GameAssets.Scripts.Managers.ScreenManager
 
             if (!_currentOpenedScreens.Any())
             {
-                Log.Error("Screen", $"There are not opened screens so you cannot hide Screen {T}");
+                Log.Error("Screen", $"There are not opened screens so you can't hide Screen {T}");
                 return;
             }
 
@@ -213,12 +214,6 @@ namespace GameAssets.Scripts.Managers.ScreenManager
             return screen.owner.GetComponent<ScreenBase>() as T;
         }
 
-        public T SetUpScreen<T>() where T : ScreenBase
-        {
-            ScreenBase screen = SetUpScreen(null, typeof(T));
-            return screen.owner.GetComponent<ScreenBase>() as T;
-        }
-
         public (ScreenBase, Type) GetCurrentOpenedScreen()
         {
             if (_currentOpenedScreens.Count == 0)
@@ -233,7 +228,7 @@ namespace GameAssets.Scripts.Managers.ScreenManager
             return (screen, type);
         }
 
-        private ScreenBase SetUpScreen(object data, Type type)
+        private ScreenBase SetUpScreen(object data, Type type, bool isPersistant)
         {
             string screenType = type.ToString();
             
@@ -241,11 +236,14 @@ namespace GameAssets.Scripts.Managers.ScreenManager
             GameObject instance;
 
             if (screen == null)
-                instance = Instantiate(Resources.Load<GameObject>(route + prefix + type.Name), root);
+                instance = Instantiate(Resources.Load<GameObject>(route + prefix + type.Name), screensRoot);
             else
                 instance = screen.owner;
 
             screen = instance.GetComponent<ScreenBase>();
+            
+            if(isPersistant)
+                screen.isPersistant = true;
             
             OnSetUpScreen(screen);
             instance.GetComponent<ScreenBase>().Setup(data);
@@ -257,13 +255,16 @@ namespace GameAssets.Scripts.Managers.ScreenManager
         {
             if (!_currentInstanciatedScreens.Contains(screen))
                 _currentInstanciatedScreens.Add(screen);
-            
-            else screen.owner.transform.SetParent(root);
+
+            if (screen.isPersistant)
+            {
+                screen.owner.transform.SetParent(persistentScreensRoot, false);
+            }
+            else screen.owner.transform.SetParent(screensRoot);
         }
 
         #region Scene Load
 
-        #region Event subscription
         public void OnDisable()
         {
             SceneController.SceneController.Instance.OnSceneLoaded -= OnSceneLoaded;
@@ -273,23 +274,33 @@ namespace GameAssets.Scripts.Managers.ScreenManager
         {
             SceneController.SceneController.Instance.OnSceneLoaded += OnSceneLoaded;
         }
-        
-        #endregion
 
         private void OnSceneLoaded(SceneController.SceneController.SceneName scene)
         {
-            ClearOpenedScreens();
+            ClearNotPersistantScreens();
         }
 
-        private void ClearOpenedScreens()
+        private void ClearNotPersistantScreens()
         {
-            Log.Info("ScreenManager", "Clearing opened screens...");
+            Log.Info("ScreenManager", "Finding persistent screens...");
             if (_currentOpenedScreens == null) return;
-            
-            _currentOpenedScreens.Clear();
-            _currentInstanciatedScreens.Clear();
+            List<ScreenBase> cast = _currentOpenedScreens.ToList();
+
+            var openedScreens = new Stack<ScreenBase>(cast.Where(p => p != null && p.isPersistant));
+            _currentOpenedScreens = openedScreens;
+
+            _currentInstanciatedScreens = _currentInstanciatedScreens?.Where(p => p != null && p.isPersistant).ToList();
         }
 
+        #endregion
+        
+        #region Screen screensRoot management
+
+        public void SetScreensRoot(ScreenRootHook screenRootHook)
+        {
+            screensRoot = screenRootHook.transform;
+        }
+        
         #endregion
     }
 }
