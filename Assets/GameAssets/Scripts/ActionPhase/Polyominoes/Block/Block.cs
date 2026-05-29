@@ -5,6 +5,9 @@ namespace GameAssets.Scripts.ActionPhase
 {
     public class Block : MonoBehaviour
     {
+        private static readonly int Show = Animator.StringToHash("Show");
+        private static readonly int Hide = Animator.StringToHash("Hide");
+
         [System.Serializable]
         public class BlockColorData : ICloneable
         {
@@ -29,6 +32,9 @@ namespace GameAssets.Scripts.ActionPhase
         [SerializeField] private SpriteRenderer leftSpriteRenderer;
         [SerializeField] private SpriteRenderer rightSpriteRenderer;
         
+        [Header("Animator")]
+        [SerializeField] private Animator blockAnimator;
+        
         private BlockColorData _currentBlockColorData;
 
 
@@ -44,5 +50,19 @@ namespace GameAssets.Scripts.ActionPhase
             leftSpriteRenderer.color = _currentBlockColorData.leftColor;
             rightSpriteRenderer.color = _currentBlockColorData.rightColor;
         }
+
+        #region Animations
+        
+        public void DoShowAnimation()
+        {
+            blockAnimator.SetTrigger(Show);
+        }
+        
+        public void DoHideAnimation()
+        {
+            blockAnimator.SetTrigger(Hide);
+        }
+        
+        #endregion
     }
 }

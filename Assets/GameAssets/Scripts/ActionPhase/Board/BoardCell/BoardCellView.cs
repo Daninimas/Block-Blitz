@@ -15,11 +15,15 @@ namespace GameAssets.Scripts.ActionPhase
         [Header("Hover")]
         [SerializeField] private Color hoverColor;
         
+        private Block.BlockColorData _usedBlockColorData;
+        
         private Coroutine _updateVisualsCoroutine;
 
 
         #region Visual state
 
+        #region Empty
+        
         public void SetEmptyVisuals()
         {
             StopPreviousUpdateVisualsCoroutine();
@@ -27,6 +31,16 @@ namespace GameAssets.Scripts.ActionPhase
             usedBlock.gameObject.SetActive(false);
             cellSpriteRenderer.color = emptyColor;
         }
+
+        public void DoHideAnimation()
+        {
+            StopPreviousUpdateVisualsCoroutine();
+            
+            usedBlock.DoHideAnimation();
+            cellSpriteRenderer.color = emptyColor;
+        }
+
+        #endregion
         
         public void SetHighlightedVisuals(Block.BlockColorData blocksColorData)
         {
@@ -35,17 +49,31 @@ namespace GameAssets.Scripts.ActionPhase
             usedBlock.SetBlockColors(blocksColorData);
         }
         
+        public void SetUnhighlightedVisuals()
+        {
+            StopPreviousUpdateVisualsCoroutine();
+            
+            usedBlock.SetBlockColors(_usedBlockColorData);
+        }
+
+        #region Used
+        
         public void SetUsedVisuals(Block.BlockColorData blocksColorData)
         {
             StopPreviousUpdateVisualsCoroutine();
             
+            _usedBlockColorData = blocksColorData;
+            
             usedBlock.gameObject.SetActive(true);
             usedBlock.SetBlockColors(blocksColorData);
+            usedBlock.DoShowAnimation();
         }
         
         public void SetUsedVisualsWithDelay(Block.BlockColorData blocksColorData, float delay)
         {
             StopPreviousUpdateVisualsCoroutine();
+            
+            _usedBlockColorData = blocksColorData;
 
             _updateVisualsCoroutine = StartCoroutine(WaitAndSetUsedVisuals(blocksColorData, delay));
         }
@@ -56,9 +84,12 @@ namespace GameAssets.Scripts.ActionPhase
             
             usedBlock.gameObject.SetActive(true);
             usedBlock.SetBlockColors(blocksColorData);
+            usedBlock.DoShowAnimation();
             
             _updateVisualsCoroutine = null;
         }
+
+        #endregion
 
         public void SetHoveredVisuals()
         {

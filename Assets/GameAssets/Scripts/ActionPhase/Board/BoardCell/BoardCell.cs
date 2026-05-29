@@ -13,8 +13,6 @@ namespace GameAssets.Scripts.ActionPhase
         private BoardCellView _view;
         public CellState currentState { private set; get; }
         
-        private Block.BlockColorData _usedBlockColorData;
-
 
         #region Construction
         
@@ -41,21 +39,24 @@ namespace GameAssets.Scripts.ActionPhase
         public void SetFree()
         {
             currentState = CellState.Free;
-            
             _view.SetEmptyVisuals();
+        }
+
+        public void ClearUsedBlock()
+        {
+            currentState = CellState.Free;
+
+            _view.DoHideAnimation();
         }
 
         public void SetUsed(Block.BlockColorData blocksColorData, float delay = 0f)
         {
             currentState = CellState.Used;
             
-            //_usedBlockColorData = (Block.BlockColorData)blocksColorData.Clone();
-            _usedBlockColorData = blocksColorData;
-            
             if(delay == 0f)
-                _view.SetUsedVisuals(_usedBlockColorData);
+                _view.SetUsedVisuals(blocksColorData);
             else
-                _view.SetUsedVisualsWithDelay(_usedBlockColorData, delay);
+                _view.SetUsedVisualsWithDelay(blocksColorData, delay);
         }
 
         public void SetHovered()
@@ -75,7 +76,7 @@ namespace GameAssets.Scripts.ActionPhase
             if (currentState == CellState.Free)
                 _view.SetEmptyVisuals();
             else if (currentState == CellState.Used)
-                _view.SetUsedVisuals(_usedBlockColorData);
+                _view.SetUnhighlightedVisuals();
         }
 
         #endregion

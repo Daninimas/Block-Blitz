@@ -153,10 +153,11 @@ namespace GameAssets.Scripts.ActionPhase
         private void ConfirmHoveredCellsAsPlacedPolyomino(Polyomino polyomino)
         {
             SetHoveredCellsAsUsedWithAnimation(polyomino.blocksColorData);
-            ClearHoveredCells();
+            _hoveredCells.Clear();
             
             ScoreFullRowsAndColumns();
-            ClearHighlightedRowsAndColumns();
+            _highlightedFullRows.Clear();
+            _highlightedFullColumns.Clear();
         }
 
         private void SetHoveredCellsAsUsedWithAnimation(Block.BlockColorData blocksColorData)
@@ -178,7 +179,7 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 for (int c = 0; c < _grid.GetLength(1); c++)
                 {
-                    _grid[highlightedFullRow, c].SetFree();
+                    _grid[highlightedFullRow, c].ClearUsedBlock();
                 }
             }
             
@@ -187,7 +188,7 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 for (int r = 0; r < _grid.GetLength(0); r++)
                 {
-                    _grid[r, highlightedFullColumn].SetFree();
+                    _grid[r, highlightedFullColumn].ClearUsedBlock();
                 }
             }
             
