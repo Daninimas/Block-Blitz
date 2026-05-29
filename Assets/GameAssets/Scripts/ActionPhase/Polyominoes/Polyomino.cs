@@ -1,4 +1,5 @@
 using System;
+using GameAssets.Scripts.Managers.Audio;
 using GameAssets.Scripts.Tools;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -161,6 +162,8 @@ namespace GameAssets.Scripts.ActionPhase
             }
             
             ActionPhaseManager.Instance.board.PlacePolyominoInLastHoveredPos(this);
+            
+            AudioManager.Instance.PlaySound("PlacePolyomino");
             
             OnPolyominoSuccessfullyPlaced?.Invoke(this);
         }
