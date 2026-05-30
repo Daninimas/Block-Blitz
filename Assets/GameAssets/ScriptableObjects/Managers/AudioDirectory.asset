@@ -38,3 +38,7 @@ MonoBehaviour:
     mixerGroup: {fileID: 0}
     sounds:
     - {fileID: 8300000, guid: fec6e55a19a2568478b1efb557927188, type: 3}
+  musicDataArray:
+  - musicId: MainMenuMusic
+    volume: 1
+    musicClip: {fileID: 8300000, guid: 210a9238cb5a711408379a13b63b7b76, type: 3}

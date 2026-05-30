@@ -6,18 +6,18 @@ using UnityEngine.Audio;
 
 namespace GameAssets.Scripts.Managers.Audio
 {
-    [RequireComponent(typeof(AudioSource))]
     public class AudioManager : Singleton<AudioManager>, IManageable
     {
-        private AudioSource _audioSource;
+        [SerializeField] private AudioSource soundAudioSource;
+        [SerializeField] private AudioSource musicAudioSource;
         [SerializeField] private AudioDirectory audioDirectory;
         
         public bool initialized { get; set; }
-        
+
+        #region IManageable implementation
+
         public IEnumerator LoadAssets()
         {
-            _audioSource = GetComponent<AudioSource>();
-            
             initialized  = true;
             yield break;
         }
@@ -26,7 +26,8 @@ namespace GameAssets.Scripts.Managers.Audio
         {
             throw new System.NotImplementedException();
         }
-
+        
+        #endregion
 
         #region Sound management
         public void PlaySound(string soundId, float volume = 1f)
@@ -42,8 +43,39 @@ namespace GameAssets.Scripts.Managers.Audio
             AudioClip[] clips = soundData.sounds;
             AudioClip randomClip = clips[Random.Range(0, clips.Length)];
 
-            _audioSource.outputAudioMixerGroup = soundData.mixerGroup;
-            _audioSource.PlayOneShot(randomClip, volume * soundData.volume);
+            soundAudioSource.outputAudioMixerGroup = soundData.mixerGroup;
+            soundAudioSource.PlayOneShot(randomClip, volume * soundData.volume);
+        }
+
+        #endregion
+
+        #region Music management
+
+        public void PlayMusic(string musicId, float volume = 1f)
+        {
+            MusicData musicData = audioDirectory.GetMusicData(musicId);
+
+            if (musicData == null)
+            {
+                Log.Error("AudioManager", $"Music with id {musicId} not found in audio directory.");
+                return;
+            }
+            
+            AudioClip musicClip = musicData.musicClip;
+
+            musicAudioSource.clip = musicClip;
+            musicAudioSource.volume = volume * musicData.volume;
+            musicAudioSource.Play();
+        }
+
+        public void StopMusic()
+        {
+            musicAudioSource.Stop();
+        }
+
+        public void PauseMusic()
+        {
+            musicAudioSource.Pause();
         }
 
         #endregion
@@ -56,5 +88,13 @@ namespace GameAssets.Scripts.Managers.Audio
         [Range(0f, 1f)] public float volume;
         public AudioMixerGroup mixerGroup;
         public AudioClip[] sounds;
+    }
+    
+    [System.Serializable]
+    public class MusicData
+    {
+        public string musicId;
+        [Range(0f, 1f)] public float volume;
+        public AudioClip musicClip;
     }
 }
