@@ -1,5 +1,6 @@
 using System.Collections;
 using GameAssets.Scripts.ActionPhase.Score;
+using GameAssets.Scripts.Managers.Audio;
 using GameAssets.Scripts.Managers.ScreenManager;
 using GameAssets.Scripts.Tools;
 using GameAssets.Scripts.Tools.Interfaces;
@@ -76,9 +77,9 @@ namespace GameAssets.Scripts.ActionPhase
             scoreController = new ScoreController.Builder()
                 .Build(_hudScreen.scoreView);
             
-            
             // ------- Finish initialization -------
             SubscribeEvents();
+            AudioManager.Instance.PlayMusic("ActionPhaseMusic");
             
             ScreenManager.Instance.Hide<LoadScreen>();
             initialized = true;

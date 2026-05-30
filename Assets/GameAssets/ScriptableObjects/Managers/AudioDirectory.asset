@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5d4d5e9779749bb8278bc86c0fc50d8, type: 3}
   m_Name: AudioDirectory
   m_EditorClassIdentifier: 
+  globalMusicVolume: 0.34
   soundDataArray:
   - soundId: PlacePolyomino
     volume: 1
@@ -42,3 +43,9 @@ MonoBehaviour:
   - musicId: MainMenuMusic
     volume: 1
     musicClip: {fileID: 8300000, guid: 210a9238cb5a711408379a13b63b7b76, type: 3}
+  - musicId: ActionPhaseMusic
+    volume: 1
+    musicClip: {fileID: 8300000, guid: 9fd155377dcb0354097e398179ec5754, type: 3}
+  - musicId: GameOverMusic
+    volume: 1
+    musicClip: {fileID: 8300000, guid: 57a04e53adf98d1458dfcaa26b1b0a5a, type: 3}

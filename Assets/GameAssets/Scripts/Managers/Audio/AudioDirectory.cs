@@ -6,6 +6,10 @@ namespace GameAssets.Scripts.Managers.Audio
     [CreateAssetMenu(fileName = "AudioDirectory", menuName = "ScriptableObjects/AudioDirectory", order = 0)]
     public class AudioDirectory : ScriptableObject
     {
+        [Header("Configuration")]
+        public float globalMusicVolume = 1f;
+        
+        [Header("References")]
         public SoundData[] soundDataArray;
         public MusicData[] musicDataArray;
         

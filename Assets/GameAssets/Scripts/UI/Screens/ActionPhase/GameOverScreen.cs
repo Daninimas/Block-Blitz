@@ -1,3 +1,5 @@
+using System;
+using GameAssets.Scripts.Managers.Audio;
 using GameAssets.Scripts.Managers.SceneController;
 using GameAssets.Scripts.Managers.ScreenManager;
 using GameAssets.Scripts.UI.Screens.Common;
@@ -27,6 +29,13 @@ namespace GameAssets.Scripts.UI.Screens
         private void SetScreenData(GameOverScreenData screenData)
         {
             scoreValueText.text = screenData.finalScore.ToString();
+        }
+
+        public override void Show(Action Show)
+        {
+            base.Show(Show);
+            
+            AudioManager.Instance.PlayMusic("GameOverMusic");
         }
 
 

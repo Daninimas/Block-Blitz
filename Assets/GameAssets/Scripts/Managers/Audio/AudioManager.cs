@@ -12,12 +12,16 @@ namespace GameAssets.Scripts.Managers.Audio
         [SerializeField] private AudioSource musicAudioSource;
         [SerializeField] private AudioDirectory audioDirectory;
         
+        private float _globalMusicVolume;
+        
         public bool initialized { get; set; }
 
         #region IManageable implementation
 
         public IEnumerator LoadAssets()
         {
+            _globalMusicVolume = audioDirectory.globalMusicVolume;
+            
             initialized  = true;
             yield break;
         }
@@ -64,7 +68,7 @@ namespace GameAssets.Scripts.Managers.Audio
             AudioClip musicClip = musicData.musicClip;
 
             musicAudioSource.clip = musicClip;
-            musicAudioSource.volume = volume * musicData.volume;
+            musicAudioSource.volume = volume * musicData.volume * _globalMusicVolume;
             musicAudioSource.Play();
         }
 
