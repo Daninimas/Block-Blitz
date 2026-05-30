@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GameAssets.Scripts.Managers.Audio;
 using UnityEngine;
 
 namespace GameAssets.Scripts.ActionPhase
@@ -194,6 +195,8 @@ namespace GameAssets.Scripts.ActionPhase
             
             if(_highlightedFullColumns.Count == 0 && _highlightedFullRows.Count == 0)
                 return;
+            
+            AudioManager.Instance.PlaySound("ScoreLine");
             
             OnScoredFullRowsAndColumns?.Invoke(_highlightedFullRows, _highlightedFullColumns);
         }

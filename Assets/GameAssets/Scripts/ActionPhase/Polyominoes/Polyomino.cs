@@ -118,6 +118,8 @@ namespace GameAssets.Scripts.ActionPhase
             _isOnDrag = true;
             _canBeDropped = false;
             
+            AudioManager.Instance.PlaySound("DragPolyomino");
+            
             SetSortingGroupOrder(sortingGroup.sortingOrder + 1);
         }
 
@@ -125,7 +127,7 @@ namespace GameAssets.Scripts.ActionPhase
         {
             if(!_isOnDrag)
                 return;
-
+            
             SetInPointerPosition(eventData);
 
             _canBeDropped = CheckIfCanBeDropped();
@@ -158,6 +160,9 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 blockContainer.transform.localPosition = Vector3.zero;
                 ActionPhaseManager.Instance.board.ClearHoveredCells();
+                
+                AudioManager.Instance.PlaySound("ReturnPolyomino");
+                
                 return;
             }
             

@@ -18,3 +18,23 @@ MonoBehaviour:
     mixerGroup: {fileID: 0}
     sounds:
     - {fileID: 8300000, guid: 59fbd054ff571674db9bb8128f4268bd, type: 3}
+  - soundId: DragPolyomino
+    volume: 1
+    mixerGroup: {fileID: 0}
+    sounds:
+    - {fileID: 8300000, guid: 120a839564691f742b57cadea5451a8d, type: 3}
+  - soundId: ReturnPolyomino
+    volume: 1
+    mixerGroup: {fileID: 0}
+    sounds:
+    - {fileID: 8300000, guid: dbbf83a9992203a4981d0e1ecbbc673f, type: 3}
+  - soundId: ScoreLine
+    volume: 1
+    mixerGroup: {fileID: 0}
+    sounds:
+    - {fileID: 8300000, guid: ef8a90db5ca3c9f488dd112dfa6d68f6, type: 3}
+  - soundId: UIClick
+    volume: 1
+    mixerGroup: {fileID: 0}
+    sounds:
+    - {fileID: 8300000, guid: fec6e55a19a2568478b1efb557927188, type: 3}
