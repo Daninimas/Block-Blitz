@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GameAssets.Scripts.Managers.Audio;
+using GameAssets.Scripts.Tools;
 using UnityEngine;
 
 namespace GameAssets.Scripts.ActionPhase
@@ -323,7 +324,7 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 for (int c = 0; c < _grid.GetLength(1) - polyominoCols + 1; c++)
                 {
-                    var gridPos = new Vector2Int(r, c);
+                    var gridPos = new Vector2Int(c, r);
                     (bool, List<Vector2Int>) canPlacePolyominoInPos = CanPlacePolyominoInPos(polyominoShape, gridPos);
                     
                     if(canPlacePolyominoInPos.Item1)
