@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using GameAssets.Scripts.Managers.Audio;
 using GameAssets.Scripts.Tools;
+using GameAssets.Scripts.Tools.Interfaces;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace GameAssets.Scripts.ActionPhase
 {
-    public class Board
+    public class Board : IController
     {
         private readonly BoardView _boardView;
         private readonly BoardModel _boardModel;
@@ -65,6 +66,15 @@ namespace GameAssets.Scripts.ActionPhase
             {
                 return new Board(view, new BoardModel(boardData));
             }
+        }
+        
+        #endregion
+        
+        #region Destruction
+
+        public void Destroy()
+        {
+            UnsubscribeEvents();
         }
         
         #endregion

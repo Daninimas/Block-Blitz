@@ -61,11 +61,15 @@ namespace GameAssets.Scripts.ActionPhase
         }
 
         #endregion
-        
+
+        private void OnDestroy()
+        {
+            UnloadData();
+        }
+
         public IEnumerator LoadAssets()
         {
             // ------- WORLD ELEMENTS -------
-            
             board = new Board.Builder()
                 .Build(boardView, boardData);
             
@@ -91,7 +95,11 @@ namespace GameAssets.Scripts.ActionPhase
 
         public void UnloadData()
         {
-            throw new System.NotImplementedException();
+            UnsubscribeEvents();
+            
+            board.Destroy();
+            desk.Destroy();
+            scoreController.Destroy();
         }
 
 

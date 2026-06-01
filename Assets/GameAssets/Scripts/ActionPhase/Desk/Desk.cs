@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using GameAssets.Scripts.Tools;
+using GameAssets.Scripts.Tools.Interfaces;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace GameAssets.Scripts.ActionPhase
 {
-    public class Desk
+    public class Desk : IController
     {
         private readonly DeskModel _deskModel;
         private readonly DeskView _deskView;
@@ -57,7 +57,7 @@ namespace GameAssets.Scripts.ActionPhase
 
         #region Destruction
 
-        ~Desk()
+        public void Destroy()
         {
             UnsubscribeEvents();
         }

@@ -284,12 +284,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 260785875}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1305579380}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &260785877
 MonoBehaviour:
@@ -304,10 +304,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   managerData:
-    managersSceneId: GameManagers
-    managers:
-    - {fileID: 1976204198}
-    - {fileID: 329005621}
+    managersSceneId: MainMenu
+    managers: []
 --- !u!1 &314064325
 GameObject:
   m_ObjectHideFlags: 0
@@ -883,7 +881,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1536542672}
-  - {fileID: 260785876}
   - {fileID: 250501546}
   - {fileID: 1324998884}
   - {fileID: 1664422446}
@@ -1039,8 +1036,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scenesManagers:
-  - managersSceneId: MainMenu
-    managers: []
+  - managersSceneId: GameManagers
+    managers:
+    - {fileID: 1976204198}
+    - {fileID: 329005621}
 --- !u!1 &1664422445
 GameObject:
   m_ObjectHideFlags: 0
@@ -1367,4 +1366,5 @@ SceneRoots:
   - {fileID: 165629085}
   - {fileID: 2017140493}
   - {fileID: 1036358184}
+  - {fileID: 260785876}
   - {fileID: 1305579380}

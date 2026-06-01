@@ -1,4 +1,6 @@
 
+using GameAssets.Scripts.Tools.Interfaces;
+
 namespace GameAssets.Scripts.ActionPhase
 {
     public enum CellState
@@ -8,7 +10,7 @@ namespace GameAssets.Scripts.ActionPhase
         Hovered
     }
     
-    public class BoardCell
+    public class BoardCell : IController
     {
         private BoardCellView _view;
         public CellState currentState { private set; get; }
@@ -31,6 +33,15 @@ namespace GameAssets.Scripts.ActionPhase
             }
         }
         
+        #endregion
+
+        #region Destruction
+
+        public void Destroy()
+        {
+            
+        }
+
         #endregion
 
 
@@ -104,5 +115,6 @@ namespace GameAssets.Scripts.ActionPhase
             
             _setVisualStateWithDelayCoroutine = null;
         }*/
+        
     }
 }

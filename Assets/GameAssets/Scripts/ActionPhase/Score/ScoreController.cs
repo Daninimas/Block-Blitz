@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using GameAssets.Scripts.Tools;
+using GameAssets.Scripts.Tools.Interfaces;
 using UnityEngine;
 
 namespace GameAssets.Scripts.ActionPhase.Score
 {
-    public class ScoreController
+    public class ScoreController : IController
     {
         private readonly ScoreView  _scoreView;
 
@@ -57,7 +58,7 @@ namespace GameAssets.Scripts.ActionPhase.Score
         
         #region Destruction
 
-        ~ScoreController()
+        public void Destroy()
         {
             UnsubscribeEvents();
         }
