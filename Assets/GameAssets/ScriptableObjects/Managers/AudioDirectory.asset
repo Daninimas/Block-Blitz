@@ -33,7 +33,7 @@ MonoBehaviour:
     volume: 1
     mixerGroup: {fileID: 0}
     sounds:
-    - {fileID: 8300000, guid: ef8a90db5ca3c9f488dd112dfa6d68f6, type: 3}
+    - {fileID: 8300000, guid: 79fc4d194f6732a428430758285f50da, type: 3}
   - soundId: UIClick
     volume: 1
     mixerGroup: {fileID: 0}
@@ -44,6 +44,11 @@ MonoBehaviour:
     mixerGroup: {fileID: 0}
     sounds:
     - {fileID: 8300000, guid: 16770158e85633e4fa38aa271174b879, type: 3}
+  - soundId: NewRecord
+    volume: 1
+    mixerGroup: {fileID: 0}
+    sounds:
+    - {fileID: 8300000, guid: ef8a90db5ca3c9f488dd112dfa6d68f6, type: 3}
   musicDataArray:
   - musicId: MainMenuMusic
     volume: 1

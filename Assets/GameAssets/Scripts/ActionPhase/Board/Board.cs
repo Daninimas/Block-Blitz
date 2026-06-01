@@ -102,9 +102,12 @@ namespace GameAssets.Scripts.ActionPhase
             };
 
             (bool, List<Vector2Int>) canPlacePolyominoInPos = CanPlacePolyominoInPos(polyomino.blocksShape, gridPos);
-            
-            if(!canPlacePolyominoInPos.Item1)
+
+            if (!canPlacePolyominoInPos.Item1)
+            {
+                ClearHighlightedRowsAndColumns();
                 return false;
+            }
             
             SetHoveredCells(canPlacePolyominoInPos.Item2);
                 
@@ -246,14 +249,14 @@ namespace GameAssets.Scripts.ActionPhase
 
         #region Highlight Rows and Columns
 
-        /*private void ClearHighlightedRowsAndColumns()
+        private void ClearHighlightedRowsAndColumns()
         {
-            UpdateHighlightedToRowCells(false);
-            UpdateHighlightedToColumnCells(false);
+            UpdateHighlightedToRowCells(_highlightedFullRows,false);
+            UpdateHighlightedToColumnCells(_highlightedFullColumns, false);
             
             _highlightedFullRows.Clear();
             _highlightedFullColumns.Clear();
-        }*/
+        }
 
         #region Rows
 

@@ -15,6 +15,8 @@ namespace GameAssets.Scripts.ActionPhase.Score
         public event Action<int> OnAddedScore;
         public event Action<int> OnNewRecordReached;
         
+        private bool _newRecordReached = false;
+        
         
         #region Event subscription
         private void SubscribeEvents()
@@ -43,8 +45,7 @@ namespace GameAssets.Scripts.ActionPhase.Score
             _scoreModel.CurrentScore = 0;
             
             _scoreView = view;
-            _scoreView.UpdateScoreText(scoreModel.CurrentScore);
-            _scoreView.SetHiScoreText(scoreModel.LastHiScore);
+            _scoreView.SetUp(_scoreModel.CurrentScore, _scoreModel.LastHiScore);
             
             SubscribeEvents();
         }
@@ -106,9 +107,11 @@ namespace GameAssets.Scripts.ActionPhase.Score
         private void CheckIfNewRecordIsReached()
         {
             // If it is not the first playthrough, check if the current score is higher than the previous hi score and if so, trigger the event
-            if (_scoreModel.LastHiScore > 0 && _scoreModel.CurrentScore > _scoreModel.LastHiScore)            
+            if (_scoreModel.LastHiScore > 0 && _scoreModel.CurrentScore > _scoreModel.LastHiScore && !_newRecordReached)
             {
+                _scoreView.ShowNewRecordMessage();
                 OnNewRecordReached?.Invoke(_scoreModel.CurrentScore);
+                _newRecordReached = true;
             }
         }
 
