@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GameAssets.Scripts.Managers.SaveData;
 using GameAssets.Scripts.Tools;
 using GameAssets.Scripts.Tools.Interfaces;
 using UnityEngine;
@@ -8,13 +9,11 @@ namespace GameAssets.Scripts.ActionPhase.Score
 {
     public class ScoreController : IController
     {
-        private readonly ScoreView  _scoreView;
-
-        public int CurrentScore { get; private set; }
-
-        private int[] multipleLinesFactor = new int[] { 0, 2, 4, 6, 10, 15, 20 };
+        private readonly ScoreView _scoreView;
+        private readonly ScoreModel _scoreModel;
         
         public event Action<int> OnAddedScore;
+        public event Action<int> OnNewRecordReached;
         
         
         #region Event subscription
@@ -24,33 +23,38 @@ namespace GameAssets.Scripts.ActionPhase.Score
             
             Polyomino.OnPolyominoSuccessfullyPlaced += UpdateCurrentScoreAfterPolyominoPlaced;
             ActionPhaseManager.Instance.board.OnScoredFullRowsAndColumns += UpdateCurrentScoreAfterRowsOrColumnsCompleted;
+            ActionPhaseManager.Instance.OnGameOver += SaveNewHiScore;
         }
 
         private void UnsubscribeEvents()
         {
             Polyomino.OnPolyominoSuccessfullyPlaced -= UpdateCurrentScoreAfterPolyominoPlaced;
             ActionPhaseManager.Instance.board.OnScoredFullRowsAndColumns -= UpdateCurrentScoreAfterRowsOrColumnsCompleted;
+            ActionPhaseManager.Instance.OnGameOver -= SaveNewHiScore;
         }
 
         #endregion
         
         #region Construction
         
-        ScoreController(ScoreView view)
+        ScoreController(ScoreView view, ScoreModel scoreModel)
         {
-            CurrentScore = 0;
+            _scoreModel = scoreModel;
+            _scoreModel.CurrentScore = 0;
             
             _scoreView = view;
-            _scoreView.UpdateScoreText(CurrentScore);
+            _scoreView.UpdateScoreText(scoreModel.CurrentScore);
+            _scoreView.SetHiScoreText(scoreModel.LastHiScore);
             
             SubscribeEvents();
         }
 
         public class Builder
         {
-            public ScoreController Build(ScoreView view)
+            public ScoreController Build(ScoreView view, ScoreData scoreData)
             {
-                return new ScoreController(view);
+                var scoreModel = new ScoreModel(scoreData);
+                return new ScoreController(view, scoreModel);
             }
         }
         
@@ -66,12 +70,16 @@ namespace GameAssets.Scripts.ActionPhase.Score
         #endregion
 
 
+        #region Manage scored points
+        
         private void UpdateCurrentScoreAfterPolyominoPlaced(Polyomino placedPolyomino)
         {
             uint polyominoCellsCount = placedPolyomino.GetBlocksCount();
             
-            CurrentScore += (int)polyominoCellsCount;
-            _scoreView.UpdateScoreText(CurrentScore);
+            _scoreModel.CurrentScore += (int)polyominoCellsCount;
+            _scoreView.UpdateScoreText(_scoreModel.CurrentScore);
+
+            CheckIfNewRecordIsReached();
         }
 
         private void UpdateCurrentScoreAfterRowsOrColumnsCompleted(List<int> completedRows, List<int> completedColumns)
@@ -80,8 +88,8 @@ namespace GameAssets.Scripts.ActionPhase.Score
             
             int earnedPoints = completedRows.Count * gridSize.x + completedColumns.Count * gridSize.y;
 
-            int multipleRowsExtra = multipleLinesFactor[completedRows.Count];
-            int multipleColumnsExtra = multipleLinesFactor[completedColumns.Count];
+            int multipleRowsExtra = _scoreModel.MultipleLinesFactor[completedRows.Count];
+            int multipleColumnsExtra = _scoreModel.MultipleLinesFactor[completedColumns.Count];
             
             earnedPoints += earnedPoints * multipleRowsExtra;
             earnedPoints += earnedPoints * multipleColumnsExtra;
@@ -91,10 +99,41 @@ namespace GameAssets.Scripts.ActionPhase.Score
             
             Log.Trace("ScoreController", $"Scored {earnedPoints} points for completing {completedRows.Count} rows and {completedColumns.Count} columns!");
             
-            CurrentScore += earnedPoints;
-            _scoreView.UpdateScoreText(CurrentScore, earnedPoints);
+            _scoreModel.CurrentScore += earnedPoints;
+            _scoreView.UpdateScoreText(_scoreModel.CurrentScore, earnedPoints);
             
             OnAddedScore?.Invoke(earnedPoints);
+        }
+
+        private void CheckIfNewRecordIsReached()
+        {
+            // If it is not the first playthrough, check if the current score is higher than the previous hi score and if so, trigger the event
+            if (_scoreModel.LastHiScore > 0 && _scoreModel.CurrentScore > _scoreModel.LastHiScore)            
+            {
+                OnNewRecordReached?.Invoke(_scoreModel.CurrentScore);
+            }
+        }
+
+        #endregion
+
+        public int GetCurrentScore()
+        {
+            return _scoreModel.CurrentScore;
+        }
+
+        public int GetLastHiScore()
+        {
+            return _scoreModel.CurrentScore > _scoreModel.LastHiScore ? _scoreModel.CurrentScore : _scoreModel.LastHiScore;
+        }
+
+        private void SaveNewHiScore()
+        {
+            if (_scoreModel.CurrentScore <= _scoreModel.LastHiScore) 
+                return;
+            
+            var saveData = SaveDataManager.Instance.GetSaveData();
+            saveData.hiScore = _scoreModel.CurrentScore;
+            SaveDataManager.Instance.SaveData(saveData);
         }
     }
 }

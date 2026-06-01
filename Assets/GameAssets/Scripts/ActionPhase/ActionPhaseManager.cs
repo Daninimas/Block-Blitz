@@ -14,8 +14,6 @@ namespace GameAssets.Scripts.ActionPhase
 {
     public class ActionPhaseManager : Singleton<ActionPhaseManager>, IManageable
     {
-        public ScoreController scoreController;
-        
         [Header("Factories")]
         public BoardCellsFactory boardCellsFactory;
         [FormerlySerializedAs("cellFactory")] public BlockFactory blockFactory;
@@ -32,6 +30,11 @@ namespace GameAssets.Scripts.ActionPhase
         [SerializeField] DeskView deskView;
         [SerializeField] DeskData deskData;
         public Desk desk;
+        
+        [Space(10)]
+        [Header("Score controller configuration")]
+        [SerializeField] ScoreData scoreData;
+        public ScoreController scoreController;
         
         private HUDScreen _hudScreen;
         
@@ -82,7 +85,7 @@ namespace GameAssets.Scripts.ActionPhase
             _hudScreen = ScreenManager.Instance.Show<HUDScreen>();
             
             scoreController = new ScoreController.Builder()
-                .Build(_hudScreen.scoreView);
+                .Build(_hudScreen.scoreView, scoreData);
             
             // ------- Finish initialization -------
             SubscribeEvents();
@@ -109,7 +112,8 @@ namespace GameAssets.Scripts.ActionPhase
         {
             var screenData = new GameOverScreen.GameOverScreenData
             {
-                finalScore = scoreController.CurrentScore
+                finalScore = scoreController.GetCurrentScore(),
+                lastHiScore = scoreController.GetLastHiScore()
             };
             
             ScreenManager.Instance.Show<GameOverScreen>(screenData);

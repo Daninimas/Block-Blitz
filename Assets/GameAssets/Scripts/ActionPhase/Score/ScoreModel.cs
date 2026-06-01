@@ -1,17 +1,21 @@
+using GameAssets.Scripts.Managers.SaveData;
+
 namespace GameAssets.Scripts.ActionPhase.Score
 {
-    /*public class ScoreModel
+    public class ScoreModel
     {
-        public int CurrentScore { get; private set; }
-
-        public ScoreModel()
+        private readonly ScoreData _scoreData;
+        
+        public int CurrentScore { get; set; }
+        public int LastHiScore { get; private set; }
+        public int[] MultipleLinesFactor => _scoreData.multipleLinesFactor;
+        
+        
+        public ScoreModel(ScoreData scoreData)
         {
-            CurrentScore = 0;
+            _scoreData = scoreData;
+            
+            LastHiScore = SaveDataManager.Instance.GetSaveData().hiScore;
         }
-
-        public void AddScore(int scoreToAdd)
-        {
-            CurrentScore += scoreToAdd;
-        }
-    }*/
+    }
 }

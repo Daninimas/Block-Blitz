@@ -13,6 +13,7 @@ namespace GameAssets.Scripts.UI.Screens
         public class GameOverScreenData
         {
             public int finalScore;
+            public int lastHiScore;
         }
         
         [SerializeField] private TMPro.TextMeshProUGUI scoreValueText;
