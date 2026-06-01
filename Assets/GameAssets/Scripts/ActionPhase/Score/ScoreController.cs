@@ -97,8 +97,6 @@ namespace GameAssets.Scripts.ActionPhase.Score
             if(completedColumns.Count > 0 && completedRows.Count > 0)
                 earnedPoints *= completedRows.Count + completedColumns.Count;
             
-            Log.Trace("ScoreController", $"Scored {earnedPoints} points for completing {completedRows.Count} rows and {completedColumns.Count} columns!");
-            
             _scoreModel.CurrentScore += earnedPoints;
             _scoreView.UpdateScoreText(_scoreModel.CurrentScore, earnedPoints);
             

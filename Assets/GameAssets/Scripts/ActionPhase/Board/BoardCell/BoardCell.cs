@@ -65,7 +65,7 @@ namespace GameAssets.Scripts.ActionPhase
             currentState = CellState.Used;
             
             if(delay == 0f)
-                _view.SetUsedVisuals(blocksColorData);
+                _view.SetUsedVisualsInstant(blocksColorData);
             else
                 _view.SetUsedVisualsWithDelay(blocksColorData, delay);
         }

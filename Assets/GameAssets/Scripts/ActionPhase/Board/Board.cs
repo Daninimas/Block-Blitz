@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameAssets.Scripts.Managers.Audio;
 using GameAssets.Scripts.Tools;
 using GameAssets.Scripts.Tools.Interfaces;
@@ -86,7 +87,7 @@ namespace GameAssets.Scripts.ActionPhase
                 return false;
             
             ClearHoveredCells();
-            ClearHighlightedRowsAndColumns();
+            //ClearHighlightedRowsAndColumns();
 
             if (!_boardView.IsPositionInsideRect(polyomino.BlockContainerTransform.position))
                 return false;
@@ -245,14 +246,14 @@ namespace GameAssets.Scripts.ActionPhase
 
         #region Highlight Rows and Columns
 
-        private void ClearHighlightedRowsAndColumns()
+        /*private void ClearHighlightedRowsAndColumns()
         {
             UpdateHighlightedToRowCells(false);
             UpdateHighlightedToColumnCells(false);
             
             _highlightedFullRows.Clear();
             _highlightedFullColumns.Clear();
-        }
+        }*/
 
         #region Rows
 
@@ -260,11 +261,13 @@ namespace GameAssets.Scripts.ActionPhase
         {
             CalculateHighlightedFullRows();
             
-            UpdateHighlightedToRowCells(true, polyominoBlocksColorData);
+            UpdateHighlightedToRowCells(_highlightedFullRows, true, polyominoBlocksColorData);
         }
 
         private void CalculateHighlightedFullRows()
         {
+            List<int> highlightedFullRows = new List<int>();
+            
             for (int r = 0; r < _grid.GetLength(0); r++)
             {
                 bool isFullRow = true;
@@ -278,13 +281,20 @@ namespace GameAssets.Scripts.ActionPhase
                 }
                 
                 if(isFullRow)
-                    _highlightedFullRows.Add(r);
+                    highlightedFullRows.Add(r);
             }
+            
+            List<int> rowsToUnhighlight = _highlightedFullRows.Except(highlightedFullRows).ToList();
+            UpdateHighlightedToRowCells(rowsToUnhighlight, false);
+            
+            _highlightedFullRows.Clear();
+            _highlightedFullRows.AddRange(highlightedFullRows);
         }
 
-        private void UpdateHighlightedToRowCells(bool isHighlighted, Block.BlockColorData blocksColorData = null)
+        private void UpdateHighlightedToRowCells(List<int> rowsToUpdate, bool isHighlighted, 
+            Block.BlockColorData blocksColorData = null)
         {
-            foreach (var rowToUpdateHighlight in _highlightedFullRows)
+            foreach (var rowToUpdateHighlight in rowsToUpdate)
             {
                 for (int c = 0; c < _grid.GetLength(1); c++)
                 {
@@ -308,11 +318,13 @@ namespace GameAssets.Scripts.ActionPhase
         {
             CalculateHighlightFullColumns();
 
-            UpdateHighlightedToColumnCells(true, polyominoBlocksColorData);
+            UpdateHighlightedToColumnCells(_highlightedFullColumns, true, polyominoBlocksColorData);
         }
         
         private void CalculateHighlightFullColumns()
         {
+            List<int> highlightedFullColumns = new List<int>();
+            
             for (int c = 0; c < _grid.GetLength(1); c++)
             {
                 bool isFullColumn = true;
@@ -326,13 +338,20 @@ namespace GameAssets.Scripts.ActionPhase
                 }
                 
                 if(isFullColumn)
-                    _highlightedFullColumns.Add(c);
+                    highlightedFullColumns.Add(c);
             }
+            
+            List<int> columnsToUnhighlight = _highlightedFullColumns.Except(highlightedFullColumns).ToList();
+            UpdateHighlightedToColumnCells(columnsToUnhighlight, false);
+            
+            _highlightedFullColumns.Clear();
+            _highlightedFullColumns.AddRange(highlightedFullColumns);
         }
         
-        private void UpdateHighlightedToColumnCells(bool isHighlighted, Block.BlockColorData blocksColorData = null)
+        private void UpdateHighlightedToColumnCells(List<int> columnsToUpdate, bool isHighlighted, 
+            Block.BlockColorData blocksColorData = null)
         {
-            foreach (var columnToHighlight in _highlightedFullColumns)
+            foreach (var columnToHighlight in columnsToUpdate)
             {
                 for (int r = 0; r < _grid.GetLength(0); r++)
                 {
