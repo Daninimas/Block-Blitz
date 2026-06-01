@@ -218,7 +218,7 @@ namespace GameAssets.Scripts.Managers.ScreenManager
         {
             if (_currentOpenedScreens.Count == 0)
             {
-                Log.Warning("Screen", "Cannot get current opened screen because there is no screen opened");
+                Log.Info("Screen", "Cannot get current opened screen because there is no screen opened");
                 return (null, null);
             }
 

@@ -66,9 +66,7 @@ namespace GameAssets.Scripts.UI.Screens
         
         public void ExitButtonPressed()
         {
-            ScreenManager.Instance.Show<LoadScreen>();
-            
-            SceneController.Instance.LoadScene(SceneController.SceneName.MainMenu);
+            Application.Quit();
         }
 
         #endregion
