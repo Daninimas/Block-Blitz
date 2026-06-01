@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using GameAssets.Scripts.ActionPhase.Score;
 using GameAssets.Scripts.Managers.Audio;
@@ -41,6 +42,8 @@ namespace GameAssets.Scripts.ActionPhase
         public Vector2 BlockSize => blockSize;
         
         public bool initialized { get; set; }
+
+        public event Action OnGameOver;
         
         
         #region Event subscription
@@ -102,6 +105,8 @@ namespace GameAssets.Scripts.ActionPhase
             };
             
             ScreenManager.Instance.Show<GameOverScreen>(screenData);
+            
+            OnGameOver?.Invoke();
         }
 
         #endregion

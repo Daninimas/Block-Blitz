@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GameAssets.Scripts.Managers.Audio;
 using GameAssets.Scripts.Tools;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace GameAssets.Scripts.ActionPhase
 {
@@ -18,9 +19,28 @@ namespace GameAssets.Scripts.ActionPhase
         private readonly List<int> _highlightedFullRows = new ();
         private readonly List<int> _highlightedFullColumns = new ();
         
+        private bool _interactable;
+        
         public Vector2Int GridSize => new Vector2Int(_grid.GetLength(1), _grid.GetLength(0));
         
         public event Action<List<int>, List<int>> OnScoredFullRowsAndColumns;
+        
+        
+        #region Event subscription
+
+        private void SubscribeEvents()
+        {
+            UnsubscribeEvents();
+            
+            ActionPhaseManager.Instance.OnGameOver += PlayGameOverAnimation;
+        }
+
+        private void UnsubscribeEvents()
+        {
+            ActionPhaseManager.Instance.OnGameOver -= PlayGameOverAnimation;
+        }
+
+        #endregion
 
         #region Construction
         
@@ -33,6 +53,10 @@ namespace GameAssets.Scripts.ActionPhase
                 _boardView.GetCellsParent());
             
             _boardView.InitializeData(_boardModel.boardData.gridSize);
+
+            SubscribeEvents();
+            
+            _interactable = true;
         }
 
         public class Builder
@@ -45,8 +69,12 @@ namespace GameAssets.Scripts.ActionPhase
         
         #endregion
         
+        // Returns if the polyomino can be placed
         public bool HoverByPolyomino(Polyomino polyomino)
         {
+            if (!_interactable)
+                return false;
+            
             ClearHoveredCells();
             ClearHighlightedRowsAndColumns();
 
@@ -333,6 +361,46 @@ namespace GameAssets.Scripts.ActionPhase
             }
 
             return false;
+        }
+
+        #endregion
+
+
+        #region Game over animation
+
+        private void PlayGameOverAnimation()
+        {
+            float[] fillColumnsAnimationDelays = SetFillColumnsAnimationVelocities();
+            var polyominoFactory = ActionPhaseManager.Instance.polyominoFactory;
+            float startDelay = _boardModel.boardData.gameOverAnimationStartDelay;
+
+            for (int c = 0; c < _grid.GetLength(1); c++)
+            {
+                float currentDelay = fillColumnsAnimationDelays[c] + startDelay;
+                
+                for (int r = _grid.GetLength(0) - 1 ; r >= 0 ; r--)
+                {
+                    if (_grid[r, c].currentState != CellState.Used)
+                    {
+                        _grid[r, c].SetUsed(polyominoFactory.GetRandomPolyominoCellsColor(), currentDelay);
+                    }
+                    
+                    currentDelay += fillColumnsAnimationDelays[c];
+                }
+            }
+        }
+        
+        private float[] SetFillColumnsAnimationVelocities()
+        {
+            float[] fillColumnsAnimationDelays = new float[_grid.GetLength(1)];
+
+            for (int i = 0; i < fillColumnsAnimationDelays.Length; i++)
+            {
+                fillColumnsAnimationDelays[i] = Random.Range(_boardModel.boardData.minColumnFillVelocity, 
+                    _boardModel.boardData.maxColumnFillVelocity);
+            }
+
+            return fillColumnsAnimationDelays;
         }
 
         #endregion

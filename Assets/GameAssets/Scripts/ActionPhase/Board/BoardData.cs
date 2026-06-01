@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GameAssets.Scripts.ActionPhase
 {
@@ -8,8 +7,13 @@ namespace GameAssets.Scripts.ActionPhase
     {
         public Vector2Int gridSize = Vector2Int.one;
         
-        [Header("Animation data")]
+        [Header("Use cell animation data")]
         public float useCellsAnimationStartDelay;
         public float useCellsAnimationInterDelay;
+        
+        [Header("Game Over animation data")]
+        public float gameOverAnimationStartDelay;
+        public float maxColumnFillVelocity;
+        public float minColumnFillVelocity;
     }
 }

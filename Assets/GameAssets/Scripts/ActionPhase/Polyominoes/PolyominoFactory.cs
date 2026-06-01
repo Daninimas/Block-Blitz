@@ -57,10 +57,9 @@ namespace GameAssets.Scripts.ActionPhase
         public Polyomino CreateRandomPolyomino(Transform parent)
         {
             int figureIndex = Random.Range(0, polyominoShapes.Length);
-            int colorIndex = Random.Range(0, polyominoBlocksColors.Count);
 
             int[,] shape = GetPolyominoShape(figureIndex);
-            var cellsColorData = GetPolyominoCellsColor(colorIndex);
+            var cellsColorData = GetRandomPolyominoCellsColor();
             
             var newPolyomino = Instantiate(polyominoPrefab, parent);
             
@@ -89,6 +88,12 @@ namespace GameAssets.Scripts.ActionPhase
             }
             
             return polyominoBlocksColors[colorIndex];
+        }
+        
+        public Block.BlockColorData GetRandomPolyominoCellsColor()
+        {
+            int colorIndex = Random.Range(0, polyominoBlocksColors.Count);
+            return GetPolyominoCellsColor(colorIndex);
         }
     }
 }

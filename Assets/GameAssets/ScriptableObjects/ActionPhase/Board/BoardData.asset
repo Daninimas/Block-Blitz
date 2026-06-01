@@ -15,3 +15,6 @@ MonoBehaviour:
   gridSize: {x: 8, y: 8}
   useCellsAnimationStartDelay: 0.1
   useCellsAnimationInterDelay: 0.05
+  gameOverAnimationStartDelay: 1
+  maxColumnFillVelocity: 0.2
+  minColumnFillVelocity: 0.1
