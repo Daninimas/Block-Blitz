@@ -304,8 +304,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   managerData:
-    managersSceneId: MainMenu
-    managers: []
+    managersSceneId: GameManagers
+    managers:
+    - {fileID: 1976204198}
+    - {fileID: 329005621}
 --- !u!1 &314064325
 GameObject:
   m_ObjectHideFlags: 0
@@ -735,7 +737,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.15
+  m_Volume: 0.605
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1035,11 +1037,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 417cefdf751b48168c843d74e7084653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenesManagers:
-  - managersSceneId: GameManagers
-    managers:
-    - {fileID: 1976204198}
-    - {fileID: 329005621}
+  scenesManagers: []
 --- !u!1 &1664422445
 GameObject:
   m_ObjectHideFlags: 0

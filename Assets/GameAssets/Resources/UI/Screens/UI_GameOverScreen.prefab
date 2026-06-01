@@ -523,6 +523,7 @@ MonoBehaviour:
   isBackBlocked: 1
   destroyOnBack: 1
   scoreValueText: {fileID: 4641034730327587554}
+  playMusicDelay: 1.5
 --- !u!95 &5086454104466068064
 Animator:
   serializedVersion: 5

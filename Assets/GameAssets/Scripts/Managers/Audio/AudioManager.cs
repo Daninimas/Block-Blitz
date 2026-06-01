@@ -55,7 +55,7 @@ namespace GameAssets.Scripts.Managers.Audio
 
         #region Music management
 
-        public void PlayMusic(string musicId, float volume = 1f)
+        public void PlayMusic(string musicId, float volume = 1f, float delay = 0f)
         {
             MusicData musicData = audioDirectory.GetMusicData(musicId);
 
@@ -69,7 +69,15 @@ namespace GameAssets.Scripts.Managers.Audio
 
             musicAudioSource.clip = musicClip;
             musicAudioSource.volume = volume * musicData.volume * _globalMusicVolume;
-            musicAudioSource.Play();
+
+            if (delay > 0f)
+            {
+                musicAudioSource.PlayDelayed(delay);
+            }
+            else
+            {
+                musicAudioSource.Play();
+            }
         }
 
         public void StopMusic()

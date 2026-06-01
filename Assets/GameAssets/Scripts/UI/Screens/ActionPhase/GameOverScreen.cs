@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using GameAssets.Scripts.Managers.Audio;
 using GameAssets.Scripts.Managers.SceneController;
 using GameAssets.Scripts.Managers.ScreenManager;
@@ -15,6 +16,7 @@ namespace GameAssets.Scripts.UI.Screens
         }
         
         [SerializeField] private TMPro.TextMeshProUGUI scoreValueText;
+        [SerializeField] private float playMusicDelay;
 
         public override void Setup(object data)
         {
@@ -34,8 +36,8 @@ namespace GameAssets.Scripts.UI.Screens
         public override void Show(Action Show)
         {
             base.Show(Show);
-            
-            AudioManager.Instance.PlayMusic("GameOverMusic");
+
+            StartCoroutine(PlayGameOverSoundWithDelay());
         }
 
 
@@ -49,5 +51,14 @@ namespace GameAssets.Scripts.UI.Screens
         }
 
         #endregion
+
+        public IEnumerator PlayGameOverSoundWithDelay()
+        {
+            yield return new WaitForSeconds(playMusicDelay);
+            
+            AudioManager.Instance.PlayMusic("GameOverMusic");
+            AudioManager.Instance.PlaySound("GameOver");
+            
+        }
     }
 }
