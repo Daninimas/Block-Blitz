@@ -17,6 +17,8 @@ namespace GameAssets.Scripts.UI.Screens
         }
         
         [SerializeField] private TMPro.TextMeshProUGUI scoreValueText;
+        [SerializeField] private TMPro.TextMeshProUGUI hiScoreValueText;
+        [SerializeField] private GameObject[] newRecordElements;
         [SerializeField] private float playMusicDelay;
 
         public override void Setup(object data)
@@ -32,6 +34,17 @@ namespace GameAssets.Scripts.UI.Screens
         private void SetScreenData(GameOverScreenData screenData)
         {
             scoreValueText.text = screenData.finalScore.ToString();
+            hiScoreValueText.text = screenData.lastHiScore.ToString();
+            
+            ActivateNewRecordElements(screenData.finalScore >= screenData.lastHiScore);
+        }
+
+        private void ActivateNewRecordElements(bool isNewRecord)
+        {
+            foreach (GameObject newRecordElement in newRecordElements)
+            {
+                newRecordElement.SetActive(isNewRecord);
+            }
         }
 
         public override void Show(Action Show)
@@ -49,6 +62,13 @@ namespace GameAssets.Scripts.UI.Screens
             ScreenManager.Instance.Show<LoadScreen>();
             
             SceneController.Instance.ReloadScene();
+        }
+        
+        public void ExitButtonPressed()
+        {
+            ScreenManager.Instance.Show<LoadScreen>();
+            
+            SceneController.Instance.LoadScene(SceneController.SceneName.MainMenu);
         }
 
         #endregion
