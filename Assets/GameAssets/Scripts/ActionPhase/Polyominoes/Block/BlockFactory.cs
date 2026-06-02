@@ -7,10 +7,11 @@ namespace GameAssets.Scripts.ActionPhase
     {
         [FormerlySerializedAs("cellPrefab")] public Block blockPrefab;
 
-        public Block CreateBlock(Transform parent, Block.BlockColorData blockColorData)
+        public Block CreateBlock(Transform parent, Block.BlockColorData blockColorData, 
+            Block.BlockColorData highlightBlockColorData)
         {
             Block block = Instantiate(blockPrefab, parent);
-            block.SetBlockColors(blockColorData);
+            block.SetUp(blockColorData, highlightBlockColorData);
             return block;
         }
     }

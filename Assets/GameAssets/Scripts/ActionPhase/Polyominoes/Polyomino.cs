@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GameAssets.Scripts.Managers.Audio;
 using GameAssets.Scripts.Tools;
 using UnityEngine;
@@ -72,6 +73,8 @@ namespace GameAssets.Scripts.ActionPhase
             Vector2 polyominoCenter = new Vector2(blockSize.x * blocksShape.GetLength(1) / 2f, 
                 blockSize.y * blocksShape.GetLength(0) / 2f);
             Vector2 blockCenter = new Vector2(blockSize.x / 2f, blockSize.y / 2f);
+
+            var apManager = ActionPhaseManager.Instance;
             
             for (int r = 0; r < blocksShape.GetLength(0); r++)
             {
@@ -80,7 +83,9 @@ namespace GameAssets.Scripts.ActionPhase
                     if(blocksShape[r, c] == 0)
                         continue;
                     
-                    var newBlock = ActionPhaseManager.Instance.blockFactory.CreateBlock(blockContainer, blockColorData);
+                    var newBlock = apManager.blockFactory.CreateBlock(blockContainer, blockColorData, 
+                        apManager.blockColorsDirectory.GetHighlightedBlockColor());
+                    
                     var blockTransform = newBlock.GetComponent<Transform>();
                     
                     blockTransform.localPosition = new Vector3(c * blockSize.x - polyominoCenter.x + blockCenter.x, 
@@ -99,13 +104,12 @@ namespace GameAssets.Scripts.ActionPhase
         
         public Vector3 GetTopLeftBlockPosition()
         {
-            Vector3 topLeftBlockPosition = new Vector3();
             var blockSize = ActionPhaseManager.Instance.BlockSize;
             
             Vector2 polyominoCenter = blockContainer.position;
             Vector2 blockCenter = new Vector2(blockSize.x / 2f, blockSize.y / 2f);
             
-            topLeftBlockPosition = new Vector3(polyominoCenter.x - blocksShape.GetLength(1) * blockSize.x / 2f + blockCenter.x, 
+            var topLeftBlockPosition = new Vector3(polyominoCenter.x - blocksShape.GetLength(1) * blockSize.x / 2f + blockCenter.x, 
                 polyominoCenter.y + blocksShape.GetLength(0) * blockSize.y / 2f - blockCenter.y, 0f);
             
             return topLeftBlockPosition;
@@ -193,5 +197,34 @@ namespace GameAssets.Scripts.ActionPhase
         {
             return _blocksCount;
         }
+
+        #region Highlight
+
+        public void HighlightBlocks(List<Vector2Int> blocksCoordinates)
+        {
+            foreach (var blockCoordinate in blocksCoordinates)
+            {
+                int c = blockCoordinate.x;
+                int r = blockCoordinate.y;
+                
+                _blocks[r, c].Highlight();
+            }
+        }
+
+        public void UnhighlightAllBlocks()
+        {
+            for (int r = 0; r < _blocks.GetLength(0); r++)
+            {
+                for (int c = 0; c < _blocks.GetLength(1); c++)
+                {
+                    if(_blocks[r, c] == null)
+                        continue;
+                    
+                    _blocks[r, c].Unhighlight();
+                }
+            }
+        }
+
+        #endregion
     }
 }

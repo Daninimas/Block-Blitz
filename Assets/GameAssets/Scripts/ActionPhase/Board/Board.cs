@@ -94,7 +94,7 @@ namespace GameAssets.Scripts.ActionPhase
                 return false;
             }
                 
-            
+            polyomino.UnhighlightAllBlocks();
             ClearHoveredCells();
             //ClearHighlightedRowsAndColumns();
 
@@ -124,8 +124,9 @@ namespace GameAssets.Scripts.ActionPhase
             
             SetHoveredCells(canPlacePolyominoInPos.Item2);
                 
-            HighlightFullRows(polyomino.blocksColorData);
-            HighlightFullColumns(polyomino.blocksColorData);
+            HighlightFullRows();
+            HighlightFullColumns();
+            HighlightPolyominoBlocks(polyomino, gridPos);
 
             return true;
         }
@@ -274,7 +275,7 @@ namespace GameAssets.Scripts.ActionPhase
 
         #region Rows
 
-        private void HighlightFullRows(Block.BlockColorData polyominoBlocksColorData)
+        private void HighlightFullRows()
         {
             CalculateHighlightedFullRows();
             
@@ -330,7 +331,7 @@ namespace GameAssets.Scripts.ActionPhase
 
         #region Columns
 
-        private void HighlightFullColumns(Block.BlockColorData polyominoBlocksColorData)
+        private void HighlightFullColumns()
         {
             CalculateHighlightFullColumns();
 
@@ -380,6 +381,35 @@ namespace GameAssets.Scripts.ActionPhase
             }
         }
         
+        #endregion
+
+        #region Polyomino blocks
+
+        private void HighlightPolyominoBlocks(Polyomino polyomino, Vector2Int polyominoGridPos)
+        {
+            var polyominoShape = polyomino.blocksShape;
+            List<Vector2Int> blocksToHighlight = new List<Vector2Int>();
+            
+            for (int r = 0; r < polyominoShape.GetLength(0); r++)
+            {
+                for (int c = 0; c < polyominoShape.GetLength(1); c++)
+                {
+                    if (polyominoShape[r, c] == 0)
+                        continue;
+                    
+                    int rowPos = polyominoGridPos.y + r;
+                    int colPos = polyominoGridPos.x + c;
+
+                    if (_highlightedFullColumns.Contains(colPos) || _highlightedFullRows.Contains(rowPos))
+                    {
+                        blocksToHighlight.Add(new Vector2Int(c, r));
+                    }
+                }
+            }
+            
+            polyomino.HighlightBlocks(blocksToHighlight);
+        }
+
         #endregion
         
         #endregion

@@ -36,20 +36,49 @@ namespace GameAssets.Scripts.ActionPhase
         [SerializeField] private Animator blockAnimator;
         
         private BlockColorData _currentBlockColorData;
+        private BlockColorData _highlightColorData;
 
+        
+        public void SetUp(BlockColorData blockColorData, BlockColorData highlightColorData)
+        {
+            SetBlockColors(blockColorData);
+            _highlightColorData = highlightColorData;
+        }
 
         public void SetBlockColors(BlockColorData blockColorData)
         {
-            _currentBlockColorData = blockColorData;
+            if(blockColorData == null)
+                return;
             
-            mainSpriteRenderer.color = _currentBlockColorData.mainColor;
-            glowSpriteRenderer.color = _currentBlockColorData.glowColor;
-            semiGlowSpriteRenderer.color = _currentBlockColorData.semiGlowColor;
-            topSpriteRenderer.color = _currentBlockColorData.topColor;
-            bottomSpriteRenderer.color = _currentBlockColorData.bottomColor;
-            leftSpriteRenderer.color = _currentBlockColorData.leftColor;
-            rightSpriteRenderer.color = _currentBlockColorData.rightColor;
+            _currentBlockColorData = blockColorData;
+
+            UpdateBlockColors(blockColorData);
         }
+
+        private void UpdateBlockColors(BlockColorData blockColorData)
+        {
+            mainSpriteRenderer.color = blockColorData.mainColor;
+            glowSpriteRenderer.color = blockColorData.glowColor;
+            semiGlowSpriteRenderer.color = blockColorData.semiGlowColor;
+            topSpriteRenderer.color = blockColorData.topColor;
+            bottomSpriteRenderer.color = blockColorData.bottomColor;
+            leftSpriteRenderer.color = blockColorData.leftColor;
+            rightSpriteRenderer.color = blockColorData.rightColor;
+        }
+
+        #region Highlight
+
+        public void Highlight()
+        {
+            UpdateBlockColors(_highlightColorData);
+        }
+
+        public void Unhighlight()
+        {
+            UpdateBlockColors(_currentBlockColorData);
+        }
+
+        #endregion
 
         #region Animations
         

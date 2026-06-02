@@ -22,14 +22,14 @@ namespace GameAssets.Scripts.ActionPhase
         [SerializeField] private SortingGroup sortingGroup;
         
         private Block.BlockColorData _usedBlockColorData;
-        private Block.BlockColorData _highlightedBlockColorData;
         
         private Coroutine _updateVisualsCoroutine;
 
 
         public void SetUp()
         {
-            _highlightedBlockColorData = ActionPhaseManager.Instance.blockColorsDirectory.GetHighlightedBlockColor();
+            usedBlock.SetUp(null, 
+                ActionPhaseManager.Instance.blockColorsDirectory.GetHighlightedBlockColor());
             
             HideHighlightedElements();
             SetEmptyVisuals();
@@ -72,7 +72,7 @@ namespace GameAssets.Scripts.ActionPhase
             
             sortingGroup.sortingOrder = initialSortingOrder + 1;
             
-            usedBlock.SetBlockColors(_highlightedBlockColorData);
+            usedBlock.Highlight();
         }
         
         public void SetUnhighlightedVisuals()
@@ -83,7 +83,7 @@ namespace GameAssets.Scripts.ActionPhase
             
             sortingGroup.sortingOrder = initialSortingOrder;
             
-            usedBlock.SetBlockColors(_usedBlockColorData);
+            usedBlock.Unhighlight();
         }
         
         private void HideHighlightedElements()
