@@ -1,5 +1,4 @@
 using System.Collections;
-using GameAssets.Scripts.Tools;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -18,13 +17,23 @@ namespace GameAssets.Scripts.ActionPhase
         [Header("Hover")]
         [SerializeField] private Color hoverColor;
         [Header("Highlighted")]
+        [SerializeField] private SpriteRenderer highlightedAuraSpriteRenderer;
         [SerializeField] private ParticleSystem highlightedParticleSystem;
         [SerializeField] private SortingGroup sortingGroup;
         
         private Block.BlockColorData _usedBlockColorData;
+        private Block.BlockColorData _highlightedBlockColorData;
         
         private Coroutine _updateVisualsCoroutine;
 
+
+        public void SetUp()
+        {
+            _highlightedBlockColorData = ActionPhaseManager.Instance.blockColorsDirectory.GetHighlightedBlockColor();
+            
+            HideHighlightedElements();
+            SetEmptyVisuals();
+        }
 
         #region Visual state
 
@@ -34,7 +43,7 @@ namespace GameAssets.Scripts.ActionPhase
         {
             StopPreviousUpdateVisualsCoroutine();
 
-            highlightedParticleSystem.gameObject.SetActive(false);
+            HideHighlightedElements();
             usedBlock.gameObject.SetActive(false);
             cellSpriteRenderer.color = emptyColor;
         }
@@ -43,36 +52,47 @@ namespace GameAssets.Scripts.ActionPhase
         {
             StopPreviousUpdateVisualsCoroutine();
             
-            highlightedParticleSystem.gameObject.SetActive(false);
+            HideHighlightedElements();
             
             usedBlock.DoHideAnimation();
             cellSpriteRenderer.color = emptyColor;
         }
 
         #endregion
+
+        #region Highlighted
         
-        public void SetHighlightedVisuals(Block.BlockColorData blocksColorData)
+        public void SetHighlightedVisuals()
         {
             StopPreviousUpdateVisualsCoroutine();
             
             highlightedParticleSystem.gameObject.SetActive(true);
-            highlightedParticleSystem.startColor = blocksColorData.mainColor;
+            
+            highlightedAuraSpriteRenderer.gameObject.SetActive(true);
             
             sortingGroup.sortingOrder = initialSortingOrder + 1;
             
-            usedBlock.SetBlockColors(blocksColorData);
+            usedBlock.SetBlockColors(_highlightedBlockColorData);
         }
         
         public void SetUnhighlightedVisuals()
         {
             StopPreviousUpdateVisualsCoroutine();
             
-            highlightedParticleSystem.gameObject.SetActive(false);
+            HideHighlightedElements();
             
             sortingGroup.sortingOrder = initialSortingOrder;
             
             usedBlock.SetBlockColors(_usedBlockColorData);
         }
+        
+        private void HideHighlightedElements()
+        {
+            highlightedParticleSystem.gameObject.SetActive(false);
+            highlightedAuraSpriteRenderer.gameObject.SetActive(false);
+        }
+
+        #endregion
 
         #region Used
         
@@ -105,7 +125,7 @@ namespace GameAssets.Scripts.ActionPhase
 
         private void SetUsedVisuals(Block.BlockColorData blocksColorData)
         {
-            highlightedParticleSystem.gameObject.SetActive(false);
+            HideHighlightedElements();
             
             usedBlock.gameObject.SetActive(true);
             usedBlock.SetBlockColors(blocksColorData);

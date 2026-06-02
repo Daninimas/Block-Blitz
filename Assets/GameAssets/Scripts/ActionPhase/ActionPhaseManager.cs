@@ -19,6 +19,9 @@ namespace GameAssets.Scripts.ActionPhase
         [FormerlySerializedAs("cellFactory")] public BlockFactory blockFactory;
         public PolyominoFactory polyominoFactory;
         
+        [Header("Data directories")]
+        public BlockColorsDirectory blockColorsDirectory;
+        
         [Space(10)]
         [Header("Board configuration")]
         [SerializeField] BoardView boardView;

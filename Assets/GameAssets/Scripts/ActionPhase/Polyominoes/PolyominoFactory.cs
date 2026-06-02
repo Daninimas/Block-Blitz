@@ -9,8 +9,6 @@ namespace GameAssets.Scripts.ActionPhase
     {
         [SerializeField] private Polyomino polyominoPrefab;
         
-        [FormerlySerializedAs("polyominoCellsColors")] [SerializeField] private List<Block.BlockColorData> polyominoBlocksColors;
-        
         [SerializeField] private readonly int[][,] polyominoShapes =
         {
             new int[,]
@@ -59,7 +57,7 @@ namespace GameAssets.Scripts.ActionPhase
             int figureIndex = Random.Range(0, polyominoShapes.Length);
 
             int[,] shape = GetPolyominoShape(figureIndex);
-            var cellsColorData = GetRandomPolyominoCellsColor();
+            var cellsColorData = ActionPhaseManager.Instance.blockColorsDirectory.GetRandomBlockColor();
             
             var newPolyomino = Instantiate(polyominoPrefab, parent);
             
@@ -77,23 +75,6 @@ namespace GameAssets.Scripts.ActionPhase
             }
             
             return polyominoShapes[figureIndex];
-        }
-        
-        private Block.BlockColorData GetPolyominoCellsColor(int colorIndex)
-        {
-            if(colorIndex < 0 || colorIndex >= polyominoBlocksColors.Count)
-            {
-                Log.Error("PolyominoFactory", $"Trying to get a polyomino cells color with invalid index. colorIndex: {colorIndex}");
-                return null;
-            }
-            
-            return polyominoBlocksColors[colorIndex];
-        }
-        
-        public Block.BlockColorData GetRandomPolyominoCellsColor()
-        {
-            int colorIndex = Random.Range(0, polyominoBlocksColors.Count);
-            return GetPolyominoCellsColor(colorIndex);
         }
     }
 }

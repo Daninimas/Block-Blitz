@@ -21,6 +21,7 @@ namespace GameAssets.Scripts.ActionPhase
         private BoardCell(BoardCellView view)
         {
             _view = view;
+            _view.SetUp();
             
             SetFree();
         }
@@ -77,9 +78,9 @@ namespace GameAssets.Scripts.ActionPhase
             _view.SetHoveredVisuals();
         }
 
-        public void SetHighlighted(Block.BlockColorData blocksColorData)
+        public void SetHighlighted()
         {
-            _view.SetHighlightedVisuals(blocksColorData);
+            _view.SetHighlightedVisuals();
         }
 
         public void SetUnhighlighted()

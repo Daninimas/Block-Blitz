@@ -278,7 +278,7 @@ namespace GameAssets.Scripts.ActionPhase
         {
             CalculateHighlightedFullRows();
             
-            UpdateHighlightedToRowCells(_highlightedFullRows, true, polyominoBlocksColorData);
+            UpdateHighlightedToRowCells(_highlightedFullRows, true);
         }
 
         private void CalculateHighlightedFullRows()
@@ -308,8 +308,7 @@ namespace GameAssets.Scripts.ActionPhase
             _highlightedFullRows.AddRange(highlightedFullRows);
         }
 
-        private void UpdateHighlightedToRowCells(List<int> rowsToUpdate, bool isHighlighted, 
-            Block.BlockColorData blocksColorData = null)
+        private void UpdateHighlightedToRowCells(List<int> rowsToUpdate, bool isHighlighted)
         {
             foreach (var rowToUpdateHighlight in rowsToUpdate)
             {
@@ -318,7 +317,7 @@ namespace GameAssets.Scripts.ActionPhase
                     var cell = _grid[rowToUpdateHighlight, c];
                     
                     if(isHighlighted)
-                        cell.SetHighlighted(blocksColorData);
+                        cell.SetHighlighted();
                     else
                         cell.SetUnhighlighted();
                 }
@@ -335,7 +334,7 @@ namespace GameAssets.Scripts.ActionPhase
         {
             CalculateHighlightFullColumns();
 
-            UpdateHighlightedToColumnCells(_highlightedFullColumns, true, polyominoBlocksColorData);
+            UpdateHighlightedToColumnCells(_highlightedFullColumns, true);
         }
         
         private void CalculateHighlightFullColumns()
@@ -365,8 +364,7 @@ namespace GameAssets.Scripts.ActionPhase
             _highlightedFullColumns.AddRange(highlightedFullColumns);
         }
         
-        private void UpdateHighlightedToColumnCells(List<int> columnsToUpdate, bool isHighlighted, 
-            Block.BlockColorData blocksColorData = null)
+        private void UpdateHighlightedToColumnCells(List<int> columnsToUpdate, bool isHighlighted)
         {
             foreach (var columnToHighlight in columnsToUpdate)
             {
@@ -375,7 +373,7 @@ namespace GameAssets.Scripts.ActionPhase
                     var cell = _grid[r, columnToHighlight];
                     
                     if(isHighlighted)
-                        cell.SetHighlighted(blocksColorData);
+                        cell.SetHighlighted();
                     else
                         cell.SetUnhighlighted();
                 }
@@ -417,7 +415,7 @@ namespace GameAssets.Scripts.ActionPhase
         private void PlayGameOverAnimation()
         {
             float[] fillColumnsAnimationDelays = SetFillColumnsAnimationVelocities();
-            var polyominoFactory = ActionPhaseManager.Instance.polyominoFactory;
+            var blockColorsDirectory = ActionPhaseManager.Instance.blockColorsDirectory;
             float startDelay = _boardModel.boardData.gameOverAnimationStartDelay;
 
             for (int c = 0; c < _grid.GetLength(1); c++)
@@ -428,7 +426,7 @@ namespace GameAssets.Scripts.ActionPhase
                 {
                     if (_grid[r, c].currentState != CellState.Used)
                     {
-                        _grid[r, c].SetUsed(polyominoFactory.GetRandomPolyominoCellsColor(), currentDelay);
+                        _grid[r, c].SetUsed(blockColorsDirectory.GetRandomBlockColor(), currentDelay);
                     }
                     
                     currentDelay += fillColumnsAnimationDelays[c];
