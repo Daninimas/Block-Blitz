@@ -89,13 +89,21 @@ namespace GameAssets.Scripts.ActionPhase
         public bool HoverByPolyomino(Polyomino polyomino)
         {
             if (!_interactable)
+            {
+                ClearHighlightedRowsAndColumns();
                 return false;
+            }
+                
             
             ClearHoveredCells();
             //ClearHighlightedRowsAndColumns();
 
             if (!_boardView.IsPositionInsideRect(polyomino.BlockContainerTransform.position))
+            {
+                ClearHighlightedRowsAndColumns();
                 return false;
+            }
+                
             
             Vector3 polyominoTopLeftCorner = polyomino.GetTopLeftBlockPosition();
             

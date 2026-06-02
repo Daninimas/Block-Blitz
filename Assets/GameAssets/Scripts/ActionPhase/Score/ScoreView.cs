@@ -1,5 +1,6 @@
 using GameAssets.Scripts.Managers.Audio;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GameAssets.Scripts.ActionPhase.Score
 {
@@ -45,6 +46,9 @@ namespace GameAssets.Scripts.ActionPhase.Score
         {
             addedScoreLabel.SetActive(true);
             addedScoreText.text = $"+{earnedPoints}";
+            
+            LayoutRebuilder.ForceRebuildLayoutImmediate(addedScoreLabel.GetComponent<RectTransform>());
+            
             addedScoreAnimator.SetTrigger(Show);
         }
         
