@@ -25,7 +25,12 @@ namespace GameAssets.Scripts.ActionPhase
         
         public Vector2Int GridSize => new Vector2Int(_grid.GetLength(1), _grid.GetLength(0));
         
-        public event Action<List<int>, List<int>> OnScoredFullRowsAndColumns;
+        /// <summary>
+        /// Polyomino -> the placed polyomino
+        /// List<int> -> list of scored rows
+        /// List<int> -> list of scored columns
+        /// </summary>
+        public event Action<Polyomino, List<int>, List<int>> OnPolyominoPlacedAndScored;
         
         
         #region Event subscription
@@ -200,6 +205,9 @@ namespace GameAssets.Scripts.ActionPhase
             _hoveredCells.Clear();
             
             ScoreFullRowsAndColumns();
+            
+            OnPolyominoPlacedAndScored?.Invoke(polyomino, _highlightedFullRows, _highlightedFullColumns);
+            
             _highlightedFullRows.Clear();
             _highlightedFullColumns.Clear();
         }
@@ -240,8 +248,6 @@ namespace GameAssets.Scripts.ActionPhase
                 return;
             
             AudioManager.Instance.PlaySound("ScoreLine");
-            
-            OnScoredFullRowsAndColumns?.Invoke(_highlightedFullRows, _highlightedFullColumns);
         }
 
         #endregion

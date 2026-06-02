@@ -23,15 +23,13 @@ namespace GameAssets.Scripts.ActionPhase.Score
         {
             UnsubscribeEvents();
             
-            Polyomino.OnPolyominoSuccessfullyPlaced += UpdateCurrentScoreAfterPolyominoPlaced;
-            ActionPhaseManager.Instance.board.OnScoredFullRowsAndColumns += UpdateCurrentScoreAfterRowsOrColumnsCompleted;
+            ActionPhaseManager.Instance.board.OnPolyominoPlacedAndScored += UpdateCurrentScoreAfterPolyominoPlacedInBoard;
             ActionPhaseManager.Instance.OnGameOver += SaveNewHiScore;
         }
 
         private void UnsubscribeEvents()
         {
-            Polyomino.OnPolyominoSuccessfullyPlaced -= UpdateCurrentScoreAfterPolyominoPlaced;
-            ActionPhaseManager.Instance.board.OnScoredFullRowsAndColumns -= UpdateCurrentScoreAfterRowsOrColumnsCompleted;
+            ActionPhaseManager.Instance.board.OnPolyominoPlacedAndScored -= UpdateCurrentScoreAfterPolyominoPlacedInBoard;
             ActionPhaseManager.Instance.OnGameOver -= SaveNewHiScore;
         }
 
@@ -72,18 +70,31 @@ namespace GameAssets.Scripts.ActionPhase.Score
 
 
         #region Manage scored points
-        
-        private void UpdateCurrentScoreAfterPolyominoPlaced(Polyomino placedPolyomino)
+
+        private void UpdateCurrentScoreAfterPolyominoPlacedInBoard(Polyomino placedPolyomino, 
+            List<int> completedRows, List<int> completedColumns)
         {
-            uint polyominoCellsCount = placedPolyomino.GetBlocksCount();
+            int earnedPoints = 0;
             
-            _scoreModel.CurrentScore += (int)polyominoCellsCount;
-            _scoreView.UpdateScoreText(_scoreModel.CurrentScore);
+            earnedPoints += CalculateScoreOfPlacedPolyomino(placedPolyomino);
+            earnedPoints += CalculateScoreOfRowsAndColumnsCompleted(completedRows, completedColumns);
+            
+            _scoreModel.CurrentScore += earnedPoints;
+            _scoreView.UpdateScoreText(_scoreModel.CurrentScore, earnedPoints);
+            
+            OnAddedScore?.Invoke(earnedPoints);
 
             CheckIfNewRecordIsReached();
         }
+        
+        private int CalculateScoreOfPlacedPolyomino(Polyomino placedPolyomino)
+        {
+            uint polyominoCellsCount = placedPolyomino.GetBlocksCount();
+            
+            return (int)polyominoCellsCount;
+        }
 
-        private void UpdateCurrentScoreAfterRowsOrColumnsCompleted(List<int> completedRows, List<int> completedColumns)
+        private int CalculateScoreOfRowsAndColumnsCompleted(List<int> completedRows, List<int> completedColumns)
         {
             Vector2Int gridSize = ActionPhaseManager.Instance.board.GridSize;
             
@@ -98,21 +109,24 @@ namespace GameAssets.Scripts.ActionPhase.Score
             if(completedColumns.Count > 0 && completedRows.Count > 0)
                 earnedPoints *= completedRows.Count + completedColumns.Count;
             
-            _scoreModel.CurrentScore += earnedPoints;
-            _scoreView.UpdateScoreText(_scoreModel.CurrentScore, earnedPoints);
-            
-            OnAddedScore?.Invoke(earnedPoints);
+            return earnedPoints;
         }
 
         private void CheckIfNewRecordIsReached()
         {
-            // If it is not the first playthrough, check if the current score is higher than the previous hi score and if so, trigger the event
-            if (_scoreModel.LastHiScore > 0 && _scoreModel.CurrentScore > _scoreModel.LastHiScore && !_newRecordReached)
-            {
-                _scoreView.ShowNewRecordMessage();
-                OnNewRecordReached?.Invoke(_scoreModel.CurrentScore);
-                _newRecordReached = true;
-            }
+            if (_scoreModel.CurrentScore <= _scoreModel.LastHiScore) 
+                return;
+            _scoreView.ShowNewRecordLabel();
+            _scoreView.SetHiScoreText(_scoreModel.CurrentScore);
+                
+                
+            // If it is not the first playthrough, and the event has not been triggered yet
+            if (_scoreModel.LastHiScore <= 0 || _newRecordReached) 
+                return;
+            
+            _scoreView.ShowNewRecordMessage();
+            OnNewRecordReached?.Invoke(_scoreModel.CurrentScore);
+            _newRecordReached = true;
         }
 
         #endregion
