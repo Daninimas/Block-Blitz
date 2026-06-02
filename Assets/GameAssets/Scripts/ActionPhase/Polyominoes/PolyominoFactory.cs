@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using GameAssets.Scripts.Tools;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GameAssets.Scripts.ActionPhase
 {
@@ -13,15 +11,57 @@ namespace GameAssets.Scripts.ActionPhase
         {
             new int[,]
             {
+                { 0, 0, 1 },
+                { 1, 1, 1 }
+            },
+            new int[,]
+            {
+                { 1, 0, 0 },
+                { 1, 1, 1 }
+            },
+            
+            new int[,]
+            {
+                { 0, 1 },
+                { 1, 1 }
+            },
+            new int[,]
+            {
+                { 1, 0 },
+                { 1, 1 }
+            },
+            
+            new int[,]
+            {
                 { 0, 0, 1 }, 
                 { 0, 0, 1 },
                 { 1, 1, 1 }
             },
             new int[,]
             {
+                { 1, 0, 0 }, 
+                { 1, 0, 0 },
+                { 1, 1, 1 }
+            },
+            
+            new int[,]
+            {
                 { 0, 1, 0 },
                 { 1, 1, 1 }
             },
+            new int[,]
+            {
+                { 1, 0 },
+                { 1, 1 },
+                { 1, 0 }
+            },
+            new int[,]
+            {
+                { 0, 1 },
+                { 1, 1 },
+                { 0, 1 }
+            },
+            
             new int[,]
             {
                 { 1 }, 
@@ -32,9 +72,43 @@ namespace GameAssets.Scripts.ActionPhase
             },
             new int[,]
             {
+                { 1 }, 
+                { 1 },
+                { 1 },
+                { 1 }
+            },
+            new int[,]
+            {
+                { 1 }, 
+                { 1 },
+                { 1 }
+            },
+            
+            new int[,]
+            {
                 { 1, 1 }, 
                 { 1, 1 }
             },
+            new int[,]
+            {
+                { 1, 1 }, 
+                { 1, 1 }, 
+                { 1, 1 }
+            },
+            new int[,]
+            {
+                { 1, 1 },
+                { 1, 1 }, 
+                { 1, 1 }, 
+                { 1, 1 }
+            },
+            new int[,]
+            {
+                { 1, 1 , 1},
+                { 1, 1 , 1}, 
+                { 1, 1 , 1}
+            },
+            
             new int[,]
             {
                 { 1, 1, 0 }, 
@@ -42,13 +116,51 @@ namespace GameAssets.Scripts.ActionPhase
             },
             new int[,]
             {
+                { 0, 1, 1 }, 
+                { 1, 1, 0 }
+            },
+            
+            new int[,]
+            {
                 { 1, 1 }
             },
             new int[,]
             {
+                { 1, 1, 1, 1 }
+            },
+            new int[,]
+            {
+                { 1, 1, 1, 1, 1 }
+            },
+            new int[,]
+            {
                 { 1 }
-            }
+            },
             
+            new int[,]
+            {
+                { 1, 0 },
+                { 0, 1 }
+            },
+            new int[,]
+            {
+                { 0, 1 },
+                { 1, 0 }
+            },
+            
+            
+            new int[,]
+            {
+                { 1, 0, 0 },
+                { 0, 1, 0 },
+                { 0, 0, 1 }
+            },
+            new int[,]
+            {
+                { 0, 0, 1 },
+                { 0, 1, 0 },
+                { 1, 0, 0 }
+            }
         };
 
 
