@@ -21,6 +21,7 @@ namespace GameAssets.Scripts.ActionPhase
         
         [Header("Data directories")]
         public BlockColorsDirectory blockColorsDirectory;
+        public PolyominoDirectory polyominoDirectory;
         
         [Space(10)]
         [Header("Board configuration")]

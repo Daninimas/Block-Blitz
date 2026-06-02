@@ -6,7 +6,7 @@ namespace GameAssets.Scripts.ActionPhase
     public class DeskData : ScriptableObject
     {
         public Vector2 polyominoHoverExtraDistance = Vector2.zero;
-        
+        public int maxRetriesToFindUsablePolyominoesShapes = 0;
         
     }
 }

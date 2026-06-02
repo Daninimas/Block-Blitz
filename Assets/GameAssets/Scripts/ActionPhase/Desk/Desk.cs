@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GameAssets.Scripts.Tools;
 using GameAssets.Scripts.Tools.Interfaces;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace GameAssets.Scripts.ActionPhase
 {
@@ -73,15 +74,64 @@ namespace GameAssets.Scripts.ActionPhase
             }
 
             int usablePolyominoesPositions = _deskView.UsablePolyominoesPositions;
+            
+            var usablePolyominoes = TryToGetUsablePolyominoesShapes(usablePolyominoesPositions, 
+                _deskModel.data.maxRetriesToFindUsablePolyominoesShapes);
 
-            for (int i = 0; i < usablePolyominoesPositions; i++)
+            for (int i = 0; i < usablePolyominoes.Length; i++)
             {
-                var newPolyomino = _deskView.InstantiatePolyominoInUsablePosition(i);
+                var newPolyomino = _deskView.InstantiatePolyominoInUsablePosition(usablePolyominoes[i], i);
                 newPolyomino.SetHoverExtraDistance(PolyominoHoverExtraDistance);
                 
                 _usablePolyominoes.Add(newPolyomino);
             }
         }
+
+        private int[][,] TryToGetUsablePolyominoesShapes(int usableShapesNeeded, int maxRetries)
+        {
+            int[][,] validPolyominoesShapes = new int[usableShapesNeeded][,];
+            int currentUsablePolyominoesFound = 0;
+            int currentRetries = 0;
+            List<int> checkedPolyominoIndexes = new List<int>();
+            var apManager = ActionPhaseManager.Instance;
+            
+            bool forceRemainingPolyominoes = false; // This forces to add the remaining polyominoes when we reached the max retries
+
+            while (currentUsablePolyominoesFound < usableShapesNeeded)
+            {
+                int shapeIndex = Random.Range(0, apManager.polyominoDirectory.PolyominoShapesCount);
+                if (checkedPolyominoIndexes.Contains(shapeIndex) && !forceRemainingPolyominoes)
+                    continue;
+                
+                checkedPolyominoIndexes.Add(shapeIndex);
+                
+                var polyominoShape = apManager.polyominoDirectory.GetPolyominoShape(shapeIndex);
+                
+                if (forceRemainingPolyominoes || apManager.board.CheckIfPolyominoCanBePlacedInAllGrid(polyominoShape))
+                {
+                    validPolyominoesShapes[currentUsablePolyominoesFound] = polyominoShape;
+                    currentUsablePolyominoesFound++;
+                }
+                else
+                {
+                    Log.Trace("Desk", $"Polyomino shape with index {shapeIndex} is not usable.");
+                    
+                    currentRetries++;
+                    
+                    if (currentRetries >= maxRetries)
+                    {
+                        Log.Warning("Desk", $"Couldn't find enough usable polyominoes shapes after {maxRetries} retries. " +
+                                              $"Usable shapes found: {currentUsablePolyominoesFound}/{usableShapesNeeded}");
+                        
+                        forceRemainingPolyominoes = true;
+                    }
+                }
+            }
+
+            return validPolyominoesShapes;
+        }
+        
+        
 
         #region Placed polyomino  management
 

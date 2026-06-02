@@ -1349,6 +1349,7 @@ MonoBehaviour:
   blockFactory: {fileID: 1415352900}
   polyominoFactory: {fileID: 1301962657}
   blockColorsDirectory: {fileID: 11400000, guid: 6de106d05636ccf469bbf33cd15b32b0, type: 2}
+  polyominoDirectory: {fileID: 11400000, guid: 0baa137f826c1cc4b85eeb1b5bb9040d, type: 2}
   boardView: {fileID: 1594847624}
   boardData: {fileID: 11400000, guid: 214c8284f1070c045811608780610c6a, type: 2}
   deskView: {fileID: 539068040}

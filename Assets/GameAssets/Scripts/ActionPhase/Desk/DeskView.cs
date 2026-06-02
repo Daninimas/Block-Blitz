@@ -10,7 +10,7 @@ namespace GameAssets.Scripts.ActionPhase
         public int UsablePolyominoesPositions => usablePolyominoesPositions.Length;
 
 
-        public Polyomino InstantiatePolyominoInUsablePosition(int posIndex)
+        public Polyomino InstantiatePolyominoInUsablePosition(int[,] polyominoShape, int posIndex)
         {
             if (posIndex < 0 || posIndex >= usablePolyominoesPositions.Length)
             {
@@ -19,7 +19,8 @@ namespace GameAssets.Scripts.ActionPhase
                 return null;
             }
             
-            return ActionPhaseManager.Instance.polyominoFactory.CreateRandomPolyomino(usablePolyominoesPositions[posIndex]);
+            return ActionPhaseManager.Instance.polyominoFactory.CreatePolyomino(polyominoShape, 
+                usablePolyominoesPositions[posIndex]);
         }
 
 
