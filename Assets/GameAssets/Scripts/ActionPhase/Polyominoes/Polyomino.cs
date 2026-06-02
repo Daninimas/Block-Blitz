@@ -16,6 +16,9 @@ namespace GameAssets.Scripts.ActionPhase
         
         [SerializeField] BoxCollider2D boxCollider;
         [SerializeField] SortingGroup sortingGroup;
+        
+        [SerializeField] Vector2 scaleOnDesk;
+        [SerializeField] Vector2 scaleOnDrag;
 
         private int _initialLayerOrder;
         
@@ -43,7 +46,7 @@ namespace GameAssets.Scripts.ActionPhase
             this.blocksColorData = blockColorData;
             _initialLayerOrder = sortingGroup.sortingOrder;
 
-            SetColliderDimensions(blocksShape);
+            //SetColliderDimensions(blocksShape);
             
             CreateBlocks(blocksShape, blockColorData);
             
@@ -51,6 +54,8 @@ namespace GameAssets.Scripts.ActionPhase
                 Log.Error("Polyomino", "Main camera doesn't have a PhysicsRaycaster component, which is required for the drag and drop system to work");
             else
                 _mainCam = Camera.main;
+            
+            ChangeScale(scaleOnDesk);
         }
 
         private void SetColliderDimensions(int[,] blocksShape)
@@ -125,6 +130,8 @@ namespace GameAssets.Scripts.ActionPhase
             AudioManager.Instance.PlaySound("DragPolyomino");
             
             SetSortingGroupOrder(sortingGroup.sortingOrder + 1);
+
+            ChangeScale(scaleOnDrag);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -159,13 +166,15 @@ namespace GameAssets.Scripts.ActionPhase
             
             _isOnDrag = false;
             ResetSortingGroupOrder();
-
+            
             if (!_canBeDropped)
             {
                 blockContainer.transform.localPosition = Vector3.zero;
                 ActionPhaseManager.Instance.board.ClearHoveredCells();
                 
                 AudioManager.Instance.PlaySound("ReturnPolyomino");
+                
+                ChangeScale(scaleOnDesk);
                 
                 return;
             }
@@ -192,6 +201,11 @@ namespace GameAssets.Scripts.ActionPhase
         }
 
         #endregion
+
+        private void ChangeScale(Vector2 scale)
+        {
+            blockContainer.localScale = scale;
+        }
 
         public uint GetBlocksCount()
         {
